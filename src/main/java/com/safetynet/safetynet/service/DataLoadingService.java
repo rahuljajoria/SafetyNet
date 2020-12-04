@@ -1,7 +1,6 @@
 package com.safetynet.safetynet.service;
 
 import com.google.gson.Gson;
-import com.safetynet.safetynet.dto.CommunityEmailDTO;
 import com.safetynet.safetynet.model.*;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +16,9 @@ public class DataLoadingService {
 
     public static List<PersonEntity> persons;
     public static List<FirestationEntity> firestations;
-    public static List<MedicalRecordsEntity> medicalRecords;
+    public static List<MedicalRecordEntity> medicalRecords;
 
+    public InputFileDTO inputFileDTO;
     @PostConstruct
     public void init() throws IOException {
        // Properties properties = new Properties();
@@ -36,13 +36,29 @@ public class DataLoadingService {
         firestations = inputFileDTO.getFirestations();
         medicalRecords = inputFileDTO.getMedicalrecords();
 
-
-
-
-
-
-
     }
 
+    public InputFileDTO getInputFileDTO() {
+        return inputFileDTO;
+    }
+
+    public void setInputFileDTO(InputFileDTO inputFileDTO) {
+        this.inputFileDTO = inputFileDTO;
+    }
+
+    public void updateDataFile(List<PersonEntity> persons, List<MedicalRecordEntity> medicalRecords,
+                               List<FirestationEntity> firestations){
+        InputFileDTO inputFileDTO = new InputFileDTO();
+        if (persons != null){
+//            inputFileDTO.setPersons(persons);
+        }
+        Gson gson = new Gson();
+        gson.toJson(inputFileDTO);
+//        BufferedWriter bf
+
+    }
+    public void updatePersons(List<PersonEntity> persons){
+
+    }
 
 }

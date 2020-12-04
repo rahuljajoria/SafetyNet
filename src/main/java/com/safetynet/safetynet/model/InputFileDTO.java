@@ -5,7 +5,7 @@ import java.util.List;
 public class InputFileDTO {
     private List<PersonEntity> persons;
     private List<FirestationEntity> firestations;
-    private List<MedicalRecordsEntity> medicalrecords;
+    private List<MedicalRecordEntity> medicalrecords;
 
 
     public List<PersonEntity> getPersons() {
@@ -16,7 +16,9 @@ public class InputFileDTO {
         return firestations;
     }
 
-    public List<MedicalRecordsEntity> getMedicalrecords() {
+    public List<MedicalRecordEntity> getMedicalrecords() {
         return medicalrecords;
     }
+
+
 }

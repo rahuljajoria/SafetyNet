@@ -2,7 +2,7 @@ package com.safetynet.safetynet.model;
 
 import java.util.List;
 
-public class MedicalRecordsEntity {
+public class MedicalRecordEntity {
 
     private String firstName;
     private String lastName;
