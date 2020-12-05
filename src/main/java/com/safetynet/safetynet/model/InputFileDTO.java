@@ -20,5 +20,15 @@ public class InputFileDTO {
         return medicalrecords;
     }
 
+    public void setPersons(List<PersonEntity> persons) {
+        this.persons = persons;
+    }
 
+    public void setFirestations(List<FirestationEntity> firestations) {
+        this.firestations = firestations;
+    }
+
+    public void setMedicalrecords(List<MedicalRecordEntity> medicalrecords) {
+        this.medicalrecords = medicalrecords;
+    }
 }

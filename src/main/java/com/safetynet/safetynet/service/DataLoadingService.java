@@ -6,9 +6,8 @@ import org.springframework.stereotype.Component;
 
 
 import javax.annotation.PostConstruct;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import javax.annotation.PreDestroy;
+import java.io.*;
 import java.util.List;
 
 @Component
@@ -19,13 +18,14 @@ public class DataLoadingService {
     public static List<MedicalRecordEntity> medicalRecords;
 
     public InputFileDTO inputFileDTO;
+    String dataUrl = "src/main/resources/data/data.json";
     @PostConstruct
     public void init() throws IOException {
        // Properties properties = new Properties();
        // properties.load(new FileInputStream("src/main/resources/data/data.json"));
 
         //File reading logic
-        String dataUrl = "src/main/resources/data/data.json";
+
         BufferedReader bufferedReader = new BufferedReader(new FileReader(dataUrl));
         //Json Parse the file inputs
         Gson gson = new Gson();
@@ -46,19 +46,38 @@ public class DataLoadingService {
         this.inputFileDTO = inputFileDTO;
     }
 
+    @PreDestroy
     public void updateDataFile(List<PersonEntity> persons, List<MedicalRecordEntity> medicalRecords,
-                               List<FirestationEntity> firestations){
+                               List<FirestationEntity> firestations) {
         InputFileDTO inputFileDTO = new InputFileDTO();
         if (persons != null){
-//            inputFileDTO.setPersons(persons);
+            inputFileDTO.setPersons(persons);
+        }
+        if (medicalRecords != null){
+            inputFileDTO.setMedicalrecords(medicalRecords);
+        }
+        if (firestations != null){
+            inputFileDTO.setFirestations(firestations);
         }
         Gson gson = new Gson();
-        gson.toJson(inputFileDTO);
-//        BufferedWriter bf
-
-    }
-    public void updatePersons(List<PersonEntity> persons){
-
+        String s = gson.toJson(inputFileDTO);
+        BufferedWriter bufferedWriter = null;
+        try {
+            bufferedWriter = new BufferedWriter(new FileWriter(dataUrl));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            bufferedWriter.write(s);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //System.out.println(s);
     }
 
 }
