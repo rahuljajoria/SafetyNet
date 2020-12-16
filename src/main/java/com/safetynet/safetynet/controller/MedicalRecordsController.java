@@ -1,21 +1,19 @@
 package com.safetynet.safetynet.controller;
 import com.safetynet.safetynet.model.MedicalRecordEntity;
-import com.safetynet.safetynet.service.DataLoadingService;
+import com.safetynet.safetynet.service.FileDataLoadingService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
 public class MedicalRecordsController {
-    private static final Logger logger = LogManager.getLogger("MedicalRecordsController");
+    private static final Logger logger = LogManager.getLogger(MedicalRecordsController.class);
 
     @DeleteMapping("/medicalRecord")//http://localhost:8080/medicalRecord
-    public void deleteMedicalRecord(@RequestParam("fName") String fName, @RequestParam("lName") String lName)
-            throws IOException {
+    public void deleteMedicalRecord(@RequestParam("fName") String fName, @RequestParam("lName") String lName) {
         logger.info("Request --"+"http://localhost:8080/medicalRecord?firstName="+fName+"&lastName="+lName);
-        List<MedicalRecordEntity> medicalRecords = DataLoadingService.medicalRecords;
+        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
         for (int i = 0; i < medicalRecords.size(); i++) {
             if ((medicalRecords.get(i).getFirstName().equals(fName)) &&
                     (medicalRecords.get(i).getLastName().equals(lName))) {
@@ -24,14 +22,15 @@ public class MedicalRecordsController {
                 break;
             }
         }
-        DataLoadingService dataLoadingService = new DataLoadingService();
-        dataLoadingService.updateDataFile(null,medicalRecords,null);
+        FileDataLoadingService fileDataLoadingService = new FileDataLoadingService();
+        fileDataLoadingService.updateDataFile(null,medicalRecords,null);
         logger.info("Data is removed successfully from the list");
     }
 
     @PutMapping("/medicalRecord")
-    public void updateMedicalRecord(@RequestBody MedicalRecordEntity medicalRecordEntity) throws IOException {
-        List<MedicalRecordEntity> medicalRecords = DataLoadingService.medicalRecords;
+    public void updateMedicalRecord(@RequestBody MedicalRecordEntity medicalRecordEntity) {
+        logger.info("Request --"+"http://localhost:8080/medicalRecord"+ medicalRecordEntity);
+        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
         for (int i = 0; i < medicalRecords.size(); i++) {
             if ((medicalRecords.get(i).getFirstName().equals(medicalRecordEntity.getFirstName())) &&
                     (medicalRecords.get(i).getLastName().equals(medicalRecordEntity.getLastName())))
@@ -43,19 +42,19 @@ public class MedicalRecordsController {
                 break;
             }
         }
-        DataLoadingService dataLoadingService = new DataLoadingService();
-        dataLoadingService.updateDataFile(null,medicalRecords,null);
+        FileDataLoadingService fileDataLoadingService = new FileDataLoadingService();
+        fileDataLoadingService.updateDataFile(null,medicalRecords,null);
         logger.info("Data is successfully updated in the list");
     }
 
     @PostMapping("/medicalRecord")
-    public void addMedicalRecord(@RequestBody MedicalRecordEntity medicalRecordEntity) throws IOException {
+    public void addMedicalRecord(@RequestBody MedicalRecordEntity medicalRecordEntity) {
         logger.info("Request --"+"http://localhost:8080/medicalRecord");
-        List<MedicalRecordEntity> medicalRecords = DataLoadingService.medicalRecords;
+        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
         medicalRecords.add(medicalRecordEntity);
         logger.debug("Data added to the medical record list");
-        DataLoadingService dataLoadingService = new DataLoadingService();
-        dataLoadingService.updateDataFile(null,medicalRecords,null);
+        FileDataLoadingService fileDataLoadingService = new FileDataLoadingService();
+        fileDataLoadingService.updateDataFile(null,medicalRecords,null);
         logger.info("Data is successfully added in the list");
     }
 

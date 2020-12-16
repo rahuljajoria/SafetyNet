@@ -1,10 +1,9 @@
 package com.safetynet.safetynet.controller;
-
 import com.safetynet.safetynet.dto.*;
 import com.safetynet.safetynet.model.FirestationEntity;
 import com.safetynet.safetynet.model.MedicalRecordEntity;
 import com.safetynet.safetynet.model.PersonEntity;
-import com.safetynet.safetynet.service.DataLoadingService;
+import com.safetynet.safetynet.service.FileDataLoadingService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +16,7 @@ import java.util.List;
 
 @RestController
 public class SafetynetController {
-    private static final Logger logger = LogManager.getLogger("SafetynetController");
+    private static final Logger logger = LogManager.getLogger(SafetynetController.class);
     Date date = new Date();
     //loading the json file
    // @Value("classpath:data/data.json")
@@ -31,9 +30,9 @@ public class SafetynetController {
         logger.info("Request --"+"http://localhost:8080/firestation?stationNumber="+stationNumber);
         FireStationDTODetails.FirestationDTO firestationDTO;
         FireStationDTODetails fireStationDTODetails = new FireStationDTODetails();
-        List<PersonEntity> persons = DataLoadingService.persons;
-        List<MedicalRecordEntity> medicalRecords = DataLoadingService.medicalRecords;
-        List<FirestationEntity> firestations = DataLoadingService.firestations;
+        List<PersonEntity> persons = FileDataLoadingService.persons;
+        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
+        List<FirestationEntity> firestations = FileDataLoadingService.firestations;
         int noOfAdults = 0;
         int noOfChildren = 0;
         int temp;
@@ -88,9 +87,9 @@ public class SafetynetController {
         logger.info("Request --"+"http://localhost:8080/fire?address="+ address);
         FireDTODetails.FireDTO fireDTO;
         FireDTODetails fireDTODetails = new FireDTODetails();
-        List<PersonEntity> persons = DataLoadingService.persons;
-        List<MedicalRecordEntity> medicalRecords = DataLoadingService.medicalRecords;
-        List<FirestationEntity> firestations = DataLoadingService.firestations;
+        List<PersonEntity> persons = FileDataLoadingService.persons;
+        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
+        List<FirestationEntity> firestations = FileDataLoadingService.firestations;
         List <FireDTODetails.FireDTO> personDetails = new ArrayList<>();
         for (int i = 0; i < firestations.size(); i++) {
             if(firestations.get(i).getAddress().equals(address)) {
@@ -118,20 +117,22 @@ public class SafetynetController {
     }
 
     @RequestMapping("/flood/stations") //http://localhost:8080/flood/stations?stations=<a list of station_numbers>
-    public FloodDTODetails getFloodInfo (@RequestParam("stations") String stations){
-        logger.info("Request --" +"http://localhost:8080/flood/stations?stations="+stations);
+    public FloodDTODetails getFloodInfo (@RequestParam("stations") List <String> stations){
+        logger.info("Request --" +"http://localhost:8080/flood/stations?stations="+stations.toString());
         FloodDTODetails.DetailDTO.FloodDTO floodDTO;
         FloodDTODetails.DetailDTO detailDTO ;
         FloodDTODetails floodDTODetails = new FloodDTODetails();
-        List<PersonEntity> persons = DataLoadingService.persons;
-        List<MedicalRecordEntity> medicalRecords = DataLoadingService.medicalRecords;
-        List<FirestationEntity> firestations = DataLoadingService.firestations;
+        List<PersonEntity> persons = FileDataLoadingService.persons;
+        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
+        List<FirestationEntity> firestations = FileDataLoadingService.firestations;
         List <FloodDTODetails.DetailDTO.FloodDTO> floodDTOList;
         List <FloodDTODetails.DetailDTO> detailDTOArrayList = new ArrayList<>();
         List <String> addressList = new ArrayList<>();
         for (int i = 0; i < firestations.size(); i++) {
-            if (firestations.get(i).getStation().equals(stations)) {
-                addressList.add(firestations.get(i).getAddress());
+            for (int j = 0; j <stations.size(); j++) {
+                if (firestations.get(i).getStation().equals(stations.get(j))) {
+                    addressList.add(firestations.get(i).getAddress());
+                }
             }
         }
         logger.debug("Data from the address list "+ addressList);
@@ -166,8 +167,8 @@ public class SafetynetController {
     public PhoneAlertDTO getPhonesNumbers(@RequestParam("firestation")String firestation){
         logger.info("Request --"+"http://localhost:8080/phoneAlert?firestation="+firestation);
         PhoneAlertDTO phoneAlertDTO = new PhoneAlertDTO();
-        List<PersonEntity> persons = DataLoadingService.persons;
-        List<FirestationEntity> firestations = DataLoadingService.firestations;
+        List<PersonEntity> persons = FileDataLoadingService.persons;
+        List<FirestationEntity> firestations = FileDataLoadingService.firestations;
         List <String> addressList = new ArrayList<>();
         List <String> phoneNumberList = new ArrayList<>();
         for (int i = 0; i < firestations.size() ; i++) {
@@ -193,7 +194,7 @@ public class SafetynetController {
     public CommunityEmailDTO getEmailAddress(@RequestParam("city")String city){
         logger.info("Request --"+"http://localhost:8080/communityEmail?city="+city);
         CommunityEmailDTO communityEmailDTO = new CommunityEmailDTO();
-        List<PersonEntity> persons = DataLoadingService.persons;
+        List<PersonEntity> persons = FileDataLoadingService.persons;
         List <String> emailList = new ArrayList<>();
         for (int i = 0; i < persons.size() ; i++) {
             if (persons.get(i).getCity().equals(city)){
@@ -211,8 +212,8 @@ public class SafetynetController {
         logger.info("Request --"+"http://localhost:8080/childAlert?address="+address);
         ChildAlertDTODetails.ChildAlertDTO childAlertDTO;
         ChildAlertDTODetails childAlertDTODetails = new ChildAlertDTODetails();
-        List<PersonEntity> persons = DataLoadingService.persons;
-        List<MedicalRecordEntity> medicalRecords = DataLoadingService.medicalRecords;
+        List<PersonEntity> persons = FileDataLoadingService.persons;
+        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
         List <ChildAlertDTODetails.ChildAlertDTO> childrenDetails = new ArrayList<>();
         List <String> adultDetails = new ArrayList<>();
         for (int i = 0; i < persons.size(); i++) {
@@ -255,8 +256,8 @@ public class SafetynetController {
         logger.info("Request --"+"http://localhost:8080/personInfo?firstName="+firstName+"&lastName="+lastName);
         PersonDTODetails personInfoList = new PersonDTODetails();
         PersonDTODetails.PersonInfoDTO personInfoDTO ;
-        List<PersonEntity> persons = DataLoadingService.persons;
-        List<MedicalRecordEntity> medicalRecords = DataLoadingService.medicalRecords;
+        List<PersonEntity> persons = FileDataLoadingService.persons;
+        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
         List <PersonDTODetails.PersonInfoDTO> personInfo = new ArrayList<>();
         for (int i = 0; i < medicalRecords.size() ; i++) {
             if ((medicalRecords.get(i).getFirstName().equals(firstName)) &&
