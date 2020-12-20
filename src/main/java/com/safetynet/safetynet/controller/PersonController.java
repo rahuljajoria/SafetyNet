@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,7 +19,7 @@ public class PersonController {
     public PersonResponseDTO deletePerson(@RequestParam ("fName") String fName, @RequestParam("lName") String lName) {
         PersonResponseDTO personResponseDTO =
                 new PersonResponseDTO(fName,lName,"Could not find resource",404);
-        logger.info("Request for deleting person record using first name and last name "+ fName + " " + lName);
+        logger.info("Request for deleting person's record using first name and last name "+ fName + " " + lName);
         List<PersonEntity> persons = FileDataLoadingService.persons;
         for (int i = 0; i < persons.size(); i++) {
             if ((persons.get(i).getFirstName().equals(fName)) && (persons.get(i).getLastName().equals(lName))) {
@@ -30,9 +29,9 @@ public class PersonController {
                 personResponseDTO.setStatusCode(200);
                 break;
             }
-            fileDataLoadingService.updateDataFile(persons,null,null);
-            logger.info("Data is removed from the list");
         }
+        fileDataLoadingService.updateDataFile(persons,null,null);
+        logger.info("Data is removed from the list");
         return personResponseDTO;
     }
 
@@ -55,19 +54,18 @@ public class PersonController {
                     (persons.get(i).getLastName().equals(personEntity.getLastName()))) {
                 updatedPerson = persons.get(i);
                 updatedPerson.setAddress((personEntity.getAddress()));
-                persons.get(i).setCity(personEntity.getCity());
-                persons.get(i).setEmail(personEntity.getEmail());
-                persons.get(i).setPhone(personEntity.getPhone());
-                persons.get(i).setZip(personEntity.getZip());
+                updatedPerson.setCity(personEntity.getCity());
+                updatedPerson.setEmail(personEntity.getEmail());
+                updatedPerson.setPhone(personEntity.getPhone());
+                updatedPerson.setZip(personEntity.getZip());
                 logger.debug("updating the data from person list");
                 personResponseDTO.setErrorMessage("Update successful");
                 personResponseDTO.setStatusCode(200);
                 break;
             }
-            FileDataLoadingService fileDataLoadingService = new FileDataLoadingService();
-            fileDataLoadingService.updateDataFile(persons,null,null);
-            logger.info("Data is successfully updated in the list");
         }
+        fileDataLoadingService.updateDataFile(persons,null,null);
+        logger.info("Data is successfully updated in the list");
         return personResponseDTO;
     }
 
@@ -86,7 +84,6 @@ public class PersonController {
         personResponseDTO.setErrorMessage("Record created successfully");
         personResponseDTO.setStatusCode(200);
         logger.debug("Data added to the person list");
-        FileDataLoadingService fileDataLoadingService = new FileDataLoadingService();
         fileDataLoadingService.updateDataFile(persons,null,null);
         logger.info("Data is successfully added in the list");
         return personResponseDTO;

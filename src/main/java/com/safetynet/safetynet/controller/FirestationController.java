@@ -1,8 +1,12 @@
 package com.safetynet.safetynet.controller;
+import com.safetynet.safetynet.dto.responses.FirestationResponseDTO;
+import com.safetynet.safetynet.dto.responses.MedicalRecordResponseDTO;
 import com.safetynet.safetynet.model.FirestationEntity;
+import com.safetynet.safetynet.model.MedicalRecordEntity;
 import com.safetynet.safetynet.service.FileDataLoadingService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -10,49 +14,76 @@ import java.util.List;
 public class FirestationController {
     private static final Logger logger = LogManager.getLogger(FirestationController.class);
 
+    @Autowired
+    FileDataLoadingService fileDataLoadingService;
+
     @DeleteMapping("/firestation")
-    public void deletefirestation(@RequestParam("address") String address) {
-        logger.info("Request --"+"http://localhost:8080/firestation?address="+address);
+    public FirestationResponseDTO deletefirestation(@RequestParam("address") String address) {
+        FirestationResponseDTO firestationResponseDTO =
+                new FirestationResponseDTO(address,"Could not find resource",404);
+        logger.info("Request for deleting firestation record "+address);
         List<FirestationEntity> firestations = FileDataLoadingService.firestations;
         for (int i = 0; i < firestations.size(); i++) {
             if (firestations.get(i).getAddress().equals(address)) {
                 firestations.remove(i);
+                firestationResponseDTO.setErrorMessage("Delete successful");
+                firestationResponseDTO.setStatusCode(200);
                 logger.debug("removing the data from firestations "+address);
                 break;
             }
         }
-        FileDataLoadingService fileDataLoadingService = new FileDataLoadingService();
         fileDataLoadingService.updateDataFile(null,null,firestations);
         logger.info("Data is removed successfully from the list");
+        return firestationResponseDTO;
     }
 
     @PutMapping("/firestation")
-    public void updatefirestation(@RequestBody FirestationEntity firestationEntity) {
-//        if(personEntity.getFirstName() == null || personEntity.getLastName()){
-//            throw new Exception();
-//        }
-        logger.info("Request --"+"http://localhost:8080/firestation"+ firestationEntity);
+    public FirestationResponseDTO updatefirestation(@RequestBody FirestationEntity firestationEntity) {
+        FirestationResponseDTO firestationResponseDTO =
+                new FirestationResponseDTO(firestationEntity.getAddress(),
+                        "Could not find resource",404);
+        if ((firestationEntity.getAddress().equals(null))){
+            firestationResponseDTO.setErrorMessage("Address is null");
+            firestationResponseDTO.setStatusCode(500);
+            return firestationResponseDTO;
+        }
+        logger.info("Request for updating firestation record "+ firestationEntity.getAddress());
         List<FirestationEntity> firestations = FileDataLoadingService.firestations;
+        FirestationEntity updateFirestationEntity = null;
         for (int i = 0; i < firestations.size(); i++) {
             if ((firestations.get(i).getAddress().equals(firestationEntity.getAddress()))) {
-                firestations.get(i).setStation(firestationEntity.getStation());
+                updateFirestationEntity = firestations.get(i);
+                updateFirestationEntity.setStation(firestationEntity.getStation());
+                firestationResponseDTO.setErrorMessage("Update successful");
+                firestationResponseDTO.setStatusCode(200);
                 logger.debug("updating the data from firestation");
                 break;
             }
         }
-        FileDataLoadingService fileDataLoadingService = new FileDataLoadingService();
         fileDataLoadingService.updateDataFile(null,null,firestations);
         logger.info("Successfully updated the firestation address "+ firestationEntity.getAddress());
+        return firestationResponseDTO;
     }
 
     @PostMapping("/firestation")
-    public void addfirestation(@RequestBody FirestationEntity firestationEntity) {
-        logger.info("Request --"+"http://localhost:8080/firestation");
+    public FirestationResponseDTO addfirestation(@RequestBody FirestationEntity firestationEntity) {
+        FirestationResponseDTO firestationResponseDTO =
+                new FirestationResponseDTO(firestationEntity.getAddress(),
+                        "Could not find resource",404);
+        if ((firestationEntity.getAddress().equals(null))){
+            firestationResponseDTO.setErrorMessage("Address is null");
+            firestationResponseDTO.setStatusCode(500);
+            return firestationResponseDTO;
+        }
+        logger.info("Request for adding new firestation details in the firestation record "
+                + firestationEntity.getAddress());
         List<FirestationEntity> firestations = FileDataLoadingService.firestations;
         firestations.add(firestationEntity);
+        firestationResponseDTO.setErrorMessage("Record created successfully");
+        firestationResponseDTO.setStatusCode(200);
         logger.debug("adding the data to firestation");
-        FileDataLoadingService fileDataLoadingService = new FileDataLoadingService();
         fileDataLoadingService.updateDataFile(null,null,firestations);
         logger.info("Successfully added the firestation address and number");
+        return firestationResponseDTO;
     }
 }
