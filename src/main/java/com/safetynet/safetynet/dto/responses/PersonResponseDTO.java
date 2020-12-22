@@ -4,10 +4,6 @@ public class PersonResponseDTO extends ResponseDTO{
     private String fName;
     private String lName;
 
-    public PersonResponseDTO(String fName, String lName, String error, int statusCode) {
-        super();
-    }
-
     public String getfName() {
         return fName;
     }

@@ -1,18 +1,20 @@
 package com.safetynet.safetynet.dto;
 
+import com.safetynet.safetynet.dto.responses.ResponseDTO;
+
 import java.util.List;
 
-public class CommunityEmailDTO {
+public class CommunityEmailDTO extends ResponseDTO{
 
-    private List<String> email;
+    private List<String> emails;
 
-    public List<String> getEmail() {
+    public List<String> getEmails() {
 
-        return email;
+        return emails;
     }
 
-    public void setEmail(List<String> email) {
+    public void setEmails(List<String> emails) {
 
-        this.email = email;
+        this.emails = emails;
     }
 }

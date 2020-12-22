@@ -1,9 +1,11 @@
 package com.safetynet.safetynet.dto;
 
 
+import com.safetynet.safetynet.dto.responses.ResponseDTO;
+
 import java.util.List;
 
-public class PersonDTODetails {
+public class PersonDTODetails extends ResponseDTO {
 
     private List<PersonInfoDTO> personInfo;
 

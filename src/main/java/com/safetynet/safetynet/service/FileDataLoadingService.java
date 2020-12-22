@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.safetynet.safetynet.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -14,12 +15,22 @@ import java.util.List;
 @Component
 public class FileDataLoadingService {
 
-    public static List<PersonEntity> persons;
-    public static List<FirestationEntity> firestations;
-    public static List<MedicalRecordEntity> medicalRecords;
+    private List<PersonEntity> persons;
+    private List<FirestationEntity> firestations;
+    private List<MedicalRecordEntity> medicalRecords;
     private static final Logger logger = LogManager.getLogger(FileDataLoadingService.class);
 
-    public InputFileDTO inputFileDTO;
+    public List<PersonEntity> getPersons() {
+        return persons;
+    }
+
+    public List<FirestationEntity> getFirestations() {
+        return firestations;
+    }
+
+    public List<MedicalRecordEntity> getMedicalRecords() {
+        return medicalRecords;
+    }
 
     @PostConstruct
     public void init() {
@@ -45,35 +56,24 @@ public class FileDataLoadingService {
 
     }
 
-//    public InputFileDTO getInputFileDTO() {
-//        return inputFileDTO;
-//    }
-//
-//    public void setInputFileDTO(InputFileDTO inputFileDTO) {
-//        this.inputFileDTO = inputFileDTO;
-//    }
-
-
-
     public void updateDataFile(List<PersonEntity> persons, List<MedicalRecordEntity> medicalRecords,
                                List<FirestationEntity> firestations) {
         String dataUrl = "src/main/resources/data/data.json";
         InputFileDTO inputFileDTO = new InputFileDTO();
-
         if (persons != null){
             inputFileDTO.setPersons(persons);
-            inputFileDTO.setFirestations(FileDataLoadingService.firestations);
-            inputFileDTO.setMedicalrecords(FileDataLoadingService.medicalRecords);
+            inputFileDTO.setFirestations(getFirestations());
+            inputFileDTO.setMedicalrecords(getMedicalRecords());
         }
         else if (medicalRecords != null) {
             inputFileDTO.setMedicalrecords(medicalRecords);
-            inputFileDTO.setPersons(FileDataLoadingService.persons);
-            inputFileDTO.setFirestations(FileDataLoadingService.firestations);
+            inputFileDTO.setPersons(getPersons());
+            inputFileDTO.setFirestations(getFirestations());
         }
         else if (firestations != null){
             inputFileDTO.setFirestations(firestations);
-            inputFileDTO.setPersons(FileDataLoadingService.persons);
-            inputFileDTO.setMedicalrecords(FileDataLoadingService.medicalRecords);
+            inputFileDTO.setPersons(getPersons());
+            inputFileDTO.setMedicalrecords(getMedicalRecords());
         }
         Gson gson = new Gson();
         String outputFileData = gson.toJson(inputFileDTO);

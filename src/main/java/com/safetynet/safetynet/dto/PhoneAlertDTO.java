@@ -1,8 +1,10 @@
 package com.safetynet.safetynet.dto;
 
+import com.safetynet.safetynet.dto.responses.ResponseDTO;
+
 import java.util.List;
 
-public class PhoneAlertDTO {
+public class PhoneAlertDTO extends ResponseDTO {
 
     private List <String> phone;
 

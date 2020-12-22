@@ -1,8 +1,10 @@
 package com.safetynet.safetynet.dto;
 
+import com.safetynet.safetynet.dto.responses.ResponseDTO;
+
 import java.util.List;
 
-public class FireDTODetails {
+public class FireDTODetails extends ResponseDTO {
 
     private String station;
     private List <FireDTO> personDetails;

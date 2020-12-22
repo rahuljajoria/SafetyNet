@@ -18,38 +18,44 @@ public class MedicalRecordsController {
     @DeleteMapping("/medicalRecord")//http://localhost:8080/medicalRecord
     public MedicalRecordResponseDTO deleteMedicalRecord
             (@RequestParam("fName") String fName, @RequestParam("lName") String lName) {
-        MedicalRecordResponseDTO medicalRecordResponseDTO =
-                new MedicalRecordResponseDTO(fName,lName,"Could not find resource",404);
+        MedicalRecordResponseDTO medicalRecordResponseDTO = new MedicalRecordResponseDTO();
+        medicalRecordResponseDTO.setFname(fName);
+        medicalRecordResponseDTO.setLname(lName);
+        medicalRecordResponseDTO.setMessage("Could not find resource");
+        medicalRecordResponseDTO.setStatusCode(404);
         logger.info("Request for deleting a person's record using first and last name" +fName+" "+lName);
-        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
+        List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
         for (int i = 0; i < medicalRecords.size(); i++) {
             if ((medicalRecords.get(i).getFirstName().equals(fName)) &&
                     (medicalRecords.get(i).getLastName().equals(lName))) {
                 medicalRecords.remove(i);
-                medicalRecordResponseDTO.setErrorMessage("Delete successful");
+                medicalRecordResponseDTO.setMessage("Delete successful");
                 medicalRecordResponseDTO.setStatusCode(200);
                 logger.debug("removing the data from medical records list "+ fName+" "+ lName);
-                break;
+                fileDataLoadingService.updateDataFile(null,medicalRecords,null);
+                logger.info("Data is removed successfully from the list");
+                return medicalRecordResponseDTO;
             }
         }
-        fileDataLoadingService.updateDataFile(null,medicalRecords,null);
-        logger.info("Data is removed successfully from the list");
+        logger.info("Could not find record");
         return medicalRecordResponseDTO;
     }
 
     @PutMapping("/medicalRecord")
     public MedicalRecordResponseDTO updateMedicalRecord(@RequestBody MedicalRecordEntity medicalRecordEntity) {
-        MedicalRecordResponseDTO medicalRecordResponseDTO =
-                new MedicalRecordResponseDTO(medicalRecordEntity.getFirstName(), medicalRecordEntity.getLastName(),
-                        "Could not find resource",404);
+        MedicalRecordResponseDTO medicalRecordResponseDTO = new MedicalRecordResponseDTO();
+        medicalRecordResponseDTO.setFname(medicalRecordEntity.getFirstName());
+        medicalRecordResponseDTO.setLname(medicalRecordEntity.getLastName());
+        medicalRecordResponseDTO.setMessage("Could not find resource");
+        medicalRecordResponseDTO.setStatusCode(404);
         if (medicalRecordEntity.getFirstName().equals(null)||medicalRecordEntity.getLastName().equals(null)){
-            medicalRecordResponseDTO.setErrorMessage("Either First name or Last name is null");
+            medicalRecordResponseDTO.setMessage("Either First name or Last name is null");
             medicalRecordResponseDTO.setStatusCode(500);
             return medicalRecordResponseDTO;
         }
         logger.info("Request for updating medical record using First and last name" +
                 medicalRecordEntity.getFirstName() +" "+ medicalRecordEntity.getLastName());
-        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
+        List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
         MedicalRecordEntity updatedMedicalRecord = null;
         for (int i = 0; i < medicalRecords.size(); i++) {
             if ((medicalRecords.get(i).getFirstName().equals(medicalRecordEntity.getFirstName())) &&
@@ -60,29 +66,32 @@ public class MedicalRecordsController {
                 updatedMedicalRecord.setAllergies(medicalRecordEntity.getAllergies());
                 updatedMedicalRecord.setMedications(medicalRecordEntity.getMedications());
                 logger.debug("updating the data from medicalRecords");
-                medicalRecordResponseDTO.setErrorMessage("Update successful");
+                medicalRecordResponseDTO.setMessage("Update successful");
                 medicalRecordResponseDTO.setStatusCode(200);
-                break;
+                fileDataLoadingService.updateDataFile(null,medicalRecords,null);
+                logger.info("Data is successfully updated in the list");
+                return medicalRecordResponseDTO;
             }
         }
-        fileDataLoadingService.updateDataFile(null,medicalRecords,null);
-        logger.info("Data is successfully updated in the list");
+        logger.info("Could not find record");
         return medicalRecordResponseDTO;
     }
 
     @PostMapping("/medicalRecord")
     public MedicalRecordResponseDTO addMedicalRecord(@RequestBody MedicalRecordEntity medicalRecordEntity) {
-        MedicalRecordResponseDTO medicalRecordResponseDTO =
-                new MedicalRecordResponseDTO(medicalRecordEntity.getFirstName(), medicalRecordEntity.getLastName(),
-                        "Could not add resource",500);
+        MedicalRecordResponseDTO medicalRecordResponseDTO = new MedicalRecordResponseDTO();
+        medicalRecordResponseDTO.setFname(medicalRecordEntity.getFirstName());
+        medicalRecordResponseDTO.setLname(medicalRecordEntity.getLastName());
+        medicalRecordResponseDTO.setMessage("Could not add record");
+        medicalRecordResponseDTO.setStatusCode(500);
         if (medicalRecordEntity.getFirstName().equals(null)||medicalRecordEntity.getLastName().equals(null)){
             return medicalRecordResponseDTO;
         }
-        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
+        List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
         logger.info("Request for adding new person details in the person record" + medicalRecordEntity.getFirstName()
                 + " "+ medicalRecordEntity.getLastName());
         medicalRecords.add(medicalRecordEntity);
-        medicalRecordResponseDTO.setErrorMessage("Record created successfully");
+        medicalRecordResponseDTO.setMessage("Record created successfully");
         medicalRecordResponseDTO.setStatusCode(200);
         logger.debug("Data added to the medical record list");
         fileDataLoadingService.updateDataFile(null,medicalRecords,null);

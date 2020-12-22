@@ -2,15 +2,15 @@ package com.safetynet.safetynet.dto.responses;
 
 public class ResponseDTO {
 
-    private String errorMessage;
+    private String message;
     private int statusCode;
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getMessage() {
+        return message;
     }
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public int getStatusCode() {

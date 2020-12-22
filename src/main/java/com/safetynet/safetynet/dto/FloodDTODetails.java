@@ -1,8 +1,10 @@
 package com.safetynet.safetynet.dto;
 
+import com.safetynet.safetynet.dto.responses.ResponseDTO;
+
 import java.util.List;
 
-public class FloodDTODetails {
+public class FloodDTODetails extends ResponseDTO {
     List<DetailDTO> details;
 
     public static class DetailDTO{

@@ -6,6 +6,7 @@ import com.safetynet.safetynet.model.PersonEntity;
 import com.safetynet.safetynet.service.FileDataLoadingService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,16 +24,19 @@ public class SafetynetController {
   //  Resource resourceFile;
     //  boolean checkIfFileExist = resourceFile.exists();
     //  System.out.println(checkIfFileExist);
-
+    @Autowired
+    FileDataLoadingService fileDataLoadingService;
 
     @RequestMapping("/firestation") //http://localhost:8080/firestation?stationNumber=<station_number>
     public FireStationDTODetails getPersonsFromFireStation(@RequestParam ("stationNumber") String stationNumber){
-        logger.info("Request --"+"http://localhost:8080/firestation?stationNumber="+stationNumber);
+        logger.info("Request for a list of people serviced by the corresponding firestation "+stationNumber);
         FireStationDTODetails.FirestationDTO firestationDTO;
         FireStationDTODetails fireStationDTODetails = new FireStationDTODetails();
-        List<PersonEntity> persons = FileDataLoadingService.persons;
-        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
-        List<FirestationEntity> firestations = FileDataLoadingService.firestations;
+        fireStationDTODetails.setMessage("No data found");
+        fireStationDTODetails.setStatusCode(404);
+        List<PersonEntity> persons = fileDataLoadingService.getPersons();
+        List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
+        List<FirestationEntity> firestations = fileDataLoadingService.getFirestations();
         int noOfAdults = 0;
         int noOfChildren = 0;
         int temp;
@@ -72,24 +76,31 @@ public class SafetynetController {
                    }
                 }
             }
-            logger.debug("Calculated no of adults "+ noOfAdults);
-            logger.debug("Calculated no of children "+ noOfChildren);
         }
+        logger.debug("Calculated no of adults "+ noOfAdults);
+        logger.debug("Calculated no of children "+ noOfChildren);
         fireStationDTODetails.setPersonsInfo(personInfo);
         fireStationDTODetails.setNoOfAdults(String.valueOf(noOfAdults));
         fireStationDTODetails.setNoOfChildren(String.valueOf(noOfChildren));
+        if (!(fireStationDTODetails.getPersonsInfo().isEmpty())){
+            fireStationDTODetails.setMessage("Success");
+            fireStationDTODetails.setStatusCode(200);
+        }
         logger.info("Response --"+ fireStationDTODetails);
         return fireStationDTODetails;
     }
 
     @RequestMapping("/fire") //http://localhost:8080/fire?address=<address>
     public FireDTODetails getAddressInfo (@RequestParam("address") String address){
-        logger.info("Request --"+"http://localhost:8080/fire?address="+ address);
+        logger.info("Request is returning fire station number that services the provided address " +
+                "as well as a list of all of the people living at the address "+ address);
         FireDTODetails.FireDTO fireDTO;
         FireDTODetails fireDTODetails = new FireDTODetails();
-        List<PersonEntity> persons = FileDataLoadingService.persons;
-        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
-        List<FirestationEntity> firestations = FileDataLoadingService.firestations;
+        fireDTODetails.setMessage("No data found");
+        fireDTODetails.setStatusCode(404);
+        List<PersonEntity> persons = fileDataLoadingService.getPersons();
+        List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
+        List<FirestationEntity> firestations = fileDataLoadingService.getFirestations();
         List <FireDTODetails.FireDTO> personDetails = new ArrayList<>();
         for (int i = 0; i < firestations.size(); i++) {
             if(firestations.get(i).getAddress().equals(address)) {
@@ -112,19 +123,25 @@ public class SafetynetController {
             }
         }
         fireDTODetails.setPersonDetails(personDetails);
+        if (!(fireDTODetails.getPersonDetails().isEmpty())){
+            fireDTODetails.setMessage("Success");
+            fireDTODetails.setStatusCode(200);
+        }
         logger.info("Response --"+ fireDTODetails);
         return fireDTODetails;
     }
 
     @RequestMapping("/flood/stations") //http://localhost:8080/flood/stations?stations=<a list of station_numbers>
     public FloodDTODetails getFloodInfo (@RequestParam("stations") List <String> stations){
-        logger.info("Request --" +"http://localhost:8080/flood/stations?stations="+stations.toString());
+        logger.info("Request return a list of all the households in each fire station’s jurisdiction "+stations.toString());
         FloodDTODetails.DetailDTO.FloodDTO floodDTO;
         FloodDTODetails.DetailDTO detailDTO ;
         FloodDTODetails floodDTODetails = new FloodDTODetails();
-        List<PersonEntity> persons = FileDataLoadingService.persons;
-        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
-        List<FirestationEntity> firestations = FileDataLoadingService.firestations;
+        floodDTODetails.setMessage("No data found");
+        floodDTODetails.setStatusCode(404);
+        List<PersonEntity> persons = fileDataLoadingService.getPersons();
+        List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
+        List<FirestationEntity> firestations = fileDataLoadingService.getFirestations();
         List <FloodDTODetails.DetailDTO.FloodDTO> floodDTOList;
         List <FloodDTODetails.DetailDTO> detailDTOArrayList = new ArrayList<>();
         List <String> addressList = new ArrayList<>();
@@ -159,16 +176,23 @@ public class SafetynetController {
             logger.debug("Data from the list with grouped by addresses "+ detailDTOArrayList);
         }
         floodDTODetails.setDetails(detailDTOArrayList);
+        if (!(floodDTODetails.getDetails().isEmpty())){
+            floodDTODetails.setMessage("Success");
+            floodDTODetails.setStatusCode(200);
+        }
         logger.info("Response --"+ floodDTODetails);
         return floodDTODetails;
     }
 
     @RequestMapping("/phoneAlert") //http://localhost:8080/phoneAlert?firestation=<firestation_number>
     public PhoneAlertDTO getPhonesNumbers(@RequestParam("firestation")String firestation){
-        logger.info("Request --"+"http://localhost:8080/phoneAlert?firestation="+firestation);
+        logger.info("Request return a list of phone numbers of each person within " +
+                "the fire station’s jurisdiction "+firestation);
         PhoneAlertDTO phoneAlertDTO = new PhoneAlertDTO();
-        List<PersonEntity> persons = FileDataLoadingService.persons;
-        List<FirestationEntity> firestations = FileDataLoadingService.firestations;
+        phoneAlertDTO.setMessage("No data found");
+        phoneAlertDTO.setStatusCode(404);
+        List<PersonEntity> persons = fileDataLoadingService.getPersons();
+        List<FirestationEntity> firestations = fileDataLoadingService.getFirestations();
         List <String> addressList = new ArrayList<>();
         List <String> phoneNumberList = new ArrayList<>();
         for (int i = 0; i < firestations.size() ; i++) {
@@ -186,15 +210,21 @@ public class SafetynetController {
         }
         logger.debug("Data from phone no list "+ phoneNumberList);
         phoneAlertDTO.setPhone(phoneNumberList);
+        if (!(phoneAlertDTO.getPhone().isEmpty())){
+            phoneAlertDTO.setMessage("Success");
+            phoneAlertDTO.setStatusCode(200);
+        }
         logger.info("Response --"+ phoneAlertDTO);
         return phoneAlertDTO;
     }
 
     @RequestMapping("/communityEmail") //http://localhost:8080/communityEmail?city=<city>
     public CommunityEmailDTO getEmailAddress(@RequestParam("city")String city){
-        logger.info("Request --"+"http://localhost:8080/communityEmail?city="+city);
+        logger.info("Request return the email addresses of all of the people in the city "+city);
         CommunityEmailDTO communityEmailDTO = new CommunityEmailDTO();
-        List<PersonEntity> persons = FileDataLoadingService.persons;
+        communityEmailDTO.setMessage("No data found");
+        communityEmailDTO.setStatusCode(404);
+        List<PersonEntity> persons = fileDataLoadingService.getPersons();
         List <String> emailList = new ArrayList<>();
         for (int i = 0; i < persons.size() ; i++) {
             if (persons.get(i).getCity().equals(city)){
@@ -202,18 +232,24 @@ public class SafetynetController {
             }
         }
         logger.debug("data from the email list "+emailList);
-        communityEmailDTO.setEmail(emailList);
+        communityEmailDTO.setEmails(emailList);
+        if (!(communityEmailDTO.getEmails().isEmpty())){
+        communityEmailDTO.setMessage("Success");
+        communityEmailDTO.setStatusCode(200);
+        }
         logger.info("Response --"+communityEmailDTO);
         return communityEmailDTO;
     }
 
     @RequestMapping("/childAlert") //http://localhost:8080/childAlert?address=<address>
     public ChildAlertDTODetails getChildAlert (@RequestParam("address") String address){
-        logger.info("Request --"+"http://localhost:8080/childAlert?address="+address);
+        logger.info("Request return a list of children (anyone under the age of 18) at that address "+address);
         ChildAlertDTODetails.ChildAlertDTO childAlertDTO;
         ChildAlertDTODetails childAlertDTODetails = new ChildAlertDTODetails();
-        List<PersonEntity> persons = FileDataLoadingService.persons;
-        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
+        childAlertDTODetails.setMessage("No data found");
+        childAlertDTODetails.setStatusCode(404);
+        List<PersonEntity> persons = fileDataLoadingService.getPersons();
+        List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
         List <ChildAlertDTODetails.ChildAlertDTO> childrenDetails = new ArrayList<>();
         List <String> adultDetails = new ArrayList<>();
         for (int i = 0; i < persons.size(); i++) {
@@ -246,6 +282,10 @@ public class SafetynetController {
         }
         childAlertDTODetails.setChildrenDetails(childrenDetails);
         childAlertDTODetails.setPersonDetails(adultDetails);
+        if (!(childAlertDTODetails.getChildrenDetails().isEmpty())){
+            childAlertDTODetails.setMessage("Success");
+            childAlertDTODetails.setStatusCode(200);
+        }
         logger.info("Response --"+childAlertDTODetails);
         return childAlertDTODetails;
     }
@@ -253,11 +293,14 @@ public class SafetynetController {
     @RequestMapping("/personInfo") //http://localhost:8080/personInfo?firstName=<firstName>&lastName=<lastName>
     public PersonDTODetails getPersonInfo(@RequestParam("firstName")String firstName,
                                           @RequestParam("lastName")String lastName){
-        logger.info("Request --"+"http://localhost:8080/personInfo?firstName="+firstName+"&lastName="+lastName);
+        logger.info("Request return the person’s name, address, age, email, " +
+                "list of medications with dosages and allergies " +firstName+" "+lastName);
         PersonDTODetails personInfoList = new PersonDTODetails();
+        personInfoList.setMessage("No data found");
+        personInfoList.setStatusCode(404);
         PersonDTODetails.PersonInfoDTO personInfoDTO ;
-        List<PersonEntity> persons = FileDataLoadingService.persons;
-        List<MedicalRecordEntity> medicalRecords = FileDataLoadingService.medicalRecords;
+        List<PersonEntity> persons = fileDataLoadingService.getPersons();
+        List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
         List <PersonDTODetails.PersonInfoDTO> personInfo = new ArrayList<>();
         for (int i = 0; i < medicalRecords.size() ; i++) {
             if ((medicalRecords.get(i).getFirstName().equals(firstName)) &&
@@ -273,11 +316,14 @@ public class SafetynetController {
                 personInfoDTO.setMedications(medicalRecords.get(i).getMedications());
                 personInfoDTO.setAllergies(medicalRecords.get(i).getAllergies());
                 personInfo.add(personInfoDTO);
-
             }
         }
         logger.debug("Data from the person list "+personInfo);
         personInfoList.setPersonInfo(personInfo);
+        if (!(personInfoList.getPersonInfo().isEmpty())){
+            personInfoList.setMessage("Success");
+            personInfoList.setStatusCode(200);
+        }
         logger.info("Response --"+personInfoList);
         return personInfoList;
     }

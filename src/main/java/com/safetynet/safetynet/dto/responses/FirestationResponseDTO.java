@@ -4,10 +4,6 @@ public class FirestationResponseDTO extends ResponseDTO{
     private String address;
     private String station;
 
-    public FirestationResponseDTO(String address, String error, int statusCode) {
-        super();
-    }
-
     public String getAddress() {
         return address;
     }
