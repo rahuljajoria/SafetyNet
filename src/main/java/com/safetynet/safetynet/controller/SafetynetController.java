@@ -19,13 +19,13 @@ import java.util.List;
 public class SafetynetController {
     private static final Logger logger = LogManager.getLogger(SafetynetController.class);
     Date date = new Date();
-    //loading the json file
-   // @Value("classpath:data/data.json")
-  //  Resource resourceFile;
-    //  boolean checkIfFileExist = resourceFile.exists();
-    //  System.out.println(checkIfFileExist);
+
     @Autowired
     FileDataLoadingService fileDataLoadingService;
+
+//    public void setFileDataLoadingService(FileDataLoadingService fds){
+//        this.fileDataLoadingService = fds;
+//    }
 
     @RequestMapping("/firestation") //http://localhost:8080/firestation?stationNumber=<station_number>
     public FireStationDTODetails getPersonsFromFireStation(@RequestParam ("stationNumber") String stationNumber){
@@ -200,7 +200,7 @@ public class SafetynetController {
                 addressList.add(firestations.get(i).getAddress());
             }
         }
-        logger.debug("Data from the address list ", addressList);
+        logger.debug("Data from the address list "+ addressList);
         for (int i = 0; i < addressList.size() ; i++) {
             for (int j = 0; j < persons.size() ; j++) {
                 if (addressList.get(i).equals(persons.get(j).getAddress())){
