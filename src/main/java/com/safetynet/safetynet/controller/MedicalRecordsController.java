@@ -15,6 +15,12 @@ public class MedicalRecordsController {
     @Autowired
     FileDataLoadingService fileDataLoadingService;
 
+    /**
+     * Delete the record searched with first and last name
+     * @param fName
+     * @param lName
+     * @return First and last name from the record which is deleted
+     */
     @DeleteMapping("/medicalRecord")//http://localhost:8080/medicalRecord
     public MedicalRecordResponseDTO deleteMedicalRecord
             (@RequestParam("fName") String fName, @RequestParam("lName") String lName) {
@@ -29,18 +35,27 @@ public class MedicalRecordsController {
             if ((medicalRecords.get(i).getFirstName().equals(fName)) &&
                     (medicalRecords.get(i).getLastName().equals(lName))) {
                 medicalRecords.remove(i);
-                medicalRecordResponseDTO.setMessage("Delete successful");
-                medicalRecordResponseDTO.setStatusCode(200);
                 logger.debug("removing the data from medical records list "+ fName+" "+ lName);
-                fileDataLoadingService.updateDataFile(null,medicalRecords,null);
-                logger.info("Data is removed successfully from the list");
-                return medicalRecordResponseDTO;
+                boolean isFileWritingSuccessful =  fileDataLoadingService.updateDataFile
+                        (null,medicalRecords,null);
+                if(isFileWritingSuccessful){
+                    medicalRecordResponseDTO.setMessage("Delete successful");
+                    medicalRecordResponseDTO.setStatusCode(200);
+                    logger.info("Data is removed successfully from the list");
+                    return medicalRecordResponseDTO;
+                }
             }
         }
+        medicalRecordResponseDTO.setMessage("Record cannot be deleted");
         logger.info("Could not find record");
         return medicalRecordResponseDTO;
     }
 
+    /**
+     * Update the record searched with First and last name
+     * @param medicalRecordEntity
+     * @return updated object
+     */
     @PutMapping("/medicalRecord")
     public MedicalRecordResponseDTO updateMedicalRecord(@RequestBody MedicalRecordEntity medicalRecordEntity) {
         MedicalRecordResponseDTO medicalRecordResponseDTO = new MedicalRecordResponseDTO();
@@ -50,7 +65,7 @@ public class MedicalRecordsController {
         medicalRecordResponseDTO.setStatusCode(404);
         if (medicalRecordEntity.getFirstName().equals(null)||medicalRecordEntity.getLastName().equals(null)){
             medicalRecordResponseDTO.setMessage("Either First name or Last name is null");
-            medicalRecordResponseDTO.setStatusCode(500);
+            medicalRecordResponseDTO.setStatusCode(400);
             return medicalRecordResponseDTO;
         }
         logger.info("Request for updating medical record using First and last name" +
@@ -65,25 +80,34 @@ public class MedicalRecordsController {
                 updatedMedicalRecord.setBirthDate(medicalRecordEntity.getBirthDate());
                 updatedMedicalRecord.setAllergies(medicalRecordEntity.getAllergies());
                 updatedMedicalRecord.setMedications(medicalRecordEntity.getMedications());
-                logger.debug("updating the data from medicalRecords");
-                medicalRecordResponseDTO.setMessage("Update successful");
-                medicalRecordResponseDTO.setStatusCode(200);
-                fileDataLoadingService.updateDataFile(null,medicalRecords,null);
-                logger.info("Data is successfully updated in the list");
-                return medicalRecordResponseDTO;
+                logger.debug("updating the data from person list");
+                boolean isFileWritingSuccessful =  fileDataLoadingService.updateDataFile
+                        (null,medicalRecords,null);
+                if(isFileWritingSuccessful){
+                    medicalRecordResponseDTO.setMessage("Update successful");
+                    medicalRecordResponseDTO.setStatusCode(200);
+                    logger.info("Data is updated successfully ");
+                    return medicalRecordResponseDTO;
+                }
             }
         }
+        medicalRecordResponseDTO.setMessage("Record cannot be updated");
         logger.info("Could not find record");
         return medicalRecordResponseDTO;
     }
 
+    /**
+     * Add a new record
+     * @param medicalRecordEntity
+     * @return added object
+     */
     @PostMapping("/medicalRecord")
     public MedicalRecordResponseDTO addMedicalRecord(@RequestBody MedicalRecordEntity medicalRecordEntity) {
         MedicalRecordResponseDTO medicalRecordResponseDTO = new MedicalRecordResponseDTO();
         medicalRecordResponseDTO.setFname(medicalRecordEntity.getFirstName());
         medicalRecordResponseDTO.setLname(medicalRecordEntity.getLastName());
         medicalRecordResponseDTO.setMessage("Could not add record");
-        medicalRecordResponseDTO.setStatusCode(500);
+        medicalRecordResponseDTO.setStatusCode(400);
         if (medicalRecordEntity.getFirstName().equals(null)||medicalRecordEntity.getLastName().equals(null)){
             return medicalRecordResponseDTO;
         }
@@ -91,12 +115,19 @@ public class MedicalRecordsController {
         logger.info("Request for adding new person details in the person record" + medicalRecordEntity.getFirstName()
                 + " "+ medicalRecordEntity.getLastName());
         medicalRecords.add(medicalRecordEntity);
-        medicalRecordResponseDTO.setMessage("Record created successfully");
-        medicalRecordResponseDTO.setStatusCode(200);
-        logger.debug("Data added to the medical record list");
-        fileDataLoadingService.updateDataFile(null,medicalRecords,null);
-        logger.info("Data is successfully added in the list");
-        return medicalRecordResponseDTO;
+        logger.debug("removing the data from medical records list "+
+                medicalRecordEntity.getFirstName()+" "+ medicalRecordEntity.getLastName());
+        boolean isFileWritingSuccessful =  fileDataLoadingService.updateDataFile
+                (null,medicalRecords,null);
+        if(isFileWritingSuccessful){
+            medicalRecordResponseDTO.setMessage("add successful");
+            medicalRecordResponseDTO.setStatusCode(200);
+            logger.info("Data is added successfully");
+            return medicalRecordResponseDTO;
+        }
+        medicalRecordResponseDTO.setMessage("Record cannot be added");
+                logger.info("Could not add record");
+                return medicalRecordResponseDTO;
     }
 
 }

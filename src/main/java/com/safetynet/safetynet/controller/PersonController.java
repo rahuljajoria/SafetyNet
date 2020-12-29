@@ -15,6 +15,12 @@ public class PersonController {
     @Autowired
     FileDataLoadingService fileDataLoadingService;
 
+    /**
+     * Delete the record searched with first and last name
+     * @param fName
+     * @param lName
+     * @return First and last name from the record which is deleted
+     */
     @DeleteMapping("/person")//http://localhost:8080/person
     public PersonResponseDTO deletePerson(@RequestParam ("fName") String fName, @RequestParam("lName") String lName) {
         PersonResponseDTO personResponseDTO = new PersonResponseDTO();
@@ -28,17 +34,26 @@ public class PersonController {
             if ((persons.get(i).getFirstName().equals(fName)) && (persons.get(i).getLastName().equals(lName))) {
                 persons.remove(i);
                 logger.debug("removing the data from person list "+ fName+" "+ lName);
-                personResponseDTO.setMessage("Delete Successful");
-                personResponseDTO.setStatusCode(200);
-                fileDataLoadingService.updateDataFile(persons,null,null);
-                logger.info("Data is removed from the list");
-                return personResponseDTO;
+                boolean isFileWritingSuccessful = fileDataLoadingService.updateDataFile
+                        (persons,null,null);
+                if(isFileWritingSuccessful){
+                    personResponseDTO.setMessage("Delete Successful");
+                    personResponseDTO.setStatusCode(200);
+                    logger.info("Data is removed from the list");
+                    return personResponseDTO;
+                }
             }
         }
+        personResponseDTO.setMessage("Record cannot be deleted");
         logger.info("No record is found");
         return personResponseDTO;
     }
 
+    /**
+     * Update the record searched with First and last name
+     * @param personEntity
+     * @return updated object
+     */
     @PutMapping("/person")
     public PersonResponseDTO updatePerson(@RequestBody PersonEntity personEntity) {
         PersonResponseDTO personResponseDTO = new PersonResponseDTO();
@@ -48,7 +63,7 @@ public class PersonController {
         personResponseDTO.setStatusCode(404);
         if (personEntity.getFirstName().equals(null)||personEntity.getLastName().equals(null)){
             personResponseDTO.setMessage("Either First name or Last name is null");
-            personResponseDTO.setStatusCode(500);
+            personResponseDTO.setStatusCode(400);
             return personResponseDTO;
         }
         logger.info("Request for updating person record using First and last name "
@@ -65,36 +80,50 @@ public class PersonController {
                 updatedPerson.setPhone(personEntity.getPhone());
                 updatedPerson.setZip(personEntity.getZip());
                 logger.debug("updating the data from person list");
-                personResponseDTO.setMessage("Update successful");
-                personResponseDTO.setStatusCode(200);
-                fileDataLoadingService.updateDataFile(persons,null,null);
-                logger.info("Data is successfully updated in the list");
-                return personResponseDTO;
+                boolean isFileWritingSuccessful = fileDataLoadingService.updateDataFile
+                        (persons,null,null);
+                if(isFileWritingSuccessful){
+                    personResponseDTO.setMessage("Update Successful");
+                    personResponseDTO.setStatusCode(200);
+                    logger.info("Data is updated successfully ");
+                    return personResponseDTO;
+                }
             }
         }
-        logger.info("No record is found");
+        personResponseDTO.setMessage("Record cannot be updated");
+        logger.info("Cannot find record");
         return personResponseDTO;
     }
 
+    /**
+     * Add a new record
+     * @param personEntity
+     * @return added object
+     */
     @PostMapping("/person")
     public PersonResponseDTO addPerson(@RequestBody PersonEntity personEntity) {
         PersonResponseDTO personResponseDTO = new PersonResponseDTO();
         personResponseDTO.setfName(personEntity.getFirstName());
         personResponseDTO.setlName(personEntity.getLastName());
         personResponseDTO.setMessage("Could not add resource");
-        personResponseDTO.setStatusCode(500);
-        if (personEntity.getFirstName().equals(null)||personEntity.getLastName().equals(null)){
+        personResponseDTO.setStatusCode(400);
+        if ((personEntity.getFirstName().equals(null)) || (personEntity.getLastName().equals(null))) {
             return personResponseDTO;
         }
         List<PersonEntity> persons = fileDataLoadingService.getPersons();
         logger.info("Request for adding new person details in the person record" + personEntity.getFirstName()
-                + " "+ personEntity.getLastName());
+                + " " + personEntity.getLastName());
         persons.add(personEntity);
-        personResponseDTO.setMessage("Record created successfully");
-        personResponseDTO.setStatusCode(200);
-        logger.debug("Data added to the person list");
-        fileDataLoadingService.updateDataFile(persons,null,null);
-        logger.info("Data is successfully added in the list");
+        boolean isFileWritingSuccessful = fileDataLoadingService.updateDataFile
+                (persons, null, null);
+        if (isFileWritingSuccessful) {
+            personResponseDTO.setMessage("Add Successful");
+            personResponseDTO.setStatusCode(200);
+            logger.info("Data is added successfully ");
+            return personResponseDTO;
+        }
+        personResponseDTO.setMessage("Record cannot be added");
+        logger.info("Could not add record");
         return personResponseDTO;
     }
 

@@ -1,6 +1,7 @@
 package com.safetynet.safetynet.service;
 
 import com.google.gson.Gson;
+import com.safetynet.safetynet.constants.FileUrl;
 import com.safetynet.safetynet.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +39,7 @@ public class FileDataLoadingService {
        // properties.load(new FileInputStream("src/main/resources/data/data.json"));
 
         //File reading logic
-        String dataUrl = "src/main/resources/data/data.json";
+        String dataUrl = FileUrl.url;
         BufferedReader bufferedReader = null;
         try {
             bufferedReader = new BufferedReader(new FileReader(dataUrl));
@@ -56,9 +57,9 @@ public class FileDataLoadingService {
 
     }
 
-    public void updateDataFile(List<PersonEntity> persons, List<MedicalRecordEntity> medicalRecords,
+    public boolean updateDataFile(List<PersonEntity> persons, List<MedicalRecordEntity> medicalRecords,
                                List<FirestationEntity> firestations) {
-        String dataUrl = "src/main/resources/data/data.json";
+        String dataUrl = FileUrl.url;
         InputFileDTO inputFileDTO = new InputFileDTO();
         if (persons != null){
             inputFileDTO.setPersons(persons);
@@ -80,20 +81,14 @@ public class FileDataLoadingService {
         BufferedWriter bufferedWriter = null;
         try {
             bufferedWriter = new BufferedWriter(new FileWriter(dataUrl));
-        } catch (IOException e) {
-            logger.error("creating buffered reader ");
-        }
-        try {
             bufferedWriter.write(outputFileData);
-        } catch (IOException e) {
-            logger.error("error in closing writing to file");
-        }
-        try {
             bufferedWriter.close();
-        } catch (IOException e) {
-            logger.error("error in closing buffered reader, cannot close buffered reader");
+        } catch (Exception ex) {
+            logger.error("cannot write to file " + ex);
+            return false;
         }
-        logger.info("Data written to the file "+outputFileData);
+        logger.info("Data written to the file "+ outputFileData);
+        return true;
     }
 
 }

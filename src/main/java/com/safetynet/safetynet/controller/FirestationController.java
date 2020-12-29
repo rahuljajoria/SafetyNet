@@ -15,6 +15,11 @@ public class FirestationController {
     @Autowired
     FileDataLoadingService fileDataLoadingService;
 
+    /**
+     * Delete the record searched with address
+     * @param address
+     * @return address from the record which is deleted
+     */
     @DeleteMapping("/firestation")
     public FirestationResponseDTO deletefirestation(@RequestParam("address") String address) {
         FirestationResponseDTO firestationResponseDTO = new FirestationResponseDTO();
@@ -26,18 +31,27 @@ public class FirestationController {
         for (int i = 0; i < firestations.size(); i++) {
             if (firestations.get(i).getAddress().equals(address)) {
                 firestations.remove(i);
-                firestationResponseDTO.setMessage("Delete successful");
-                firestationResponseDTO.setStatusCode(200);
                 logger.debug("removing the data from firestations "+address);
-                fileDataLoadingService.updateDataFile(null,null,firestations);
-                logger.info("Data is removed successfully from the list");
-                return firestationResponseDTO;
+                boolean isFileWritingSuccessful = fileDataLoadingService.updateDataFile
+                        (null,null,firestations);
+                if (isFileWritingSuccessful){
+                    firestationResponseDTO.setMessage("Delete successful");
+                    firestationResponseDTO.setStatusCode(200);
+                    logger.info("Data is removed successfully from the list");
+                    return firestationResponseDTO;
+                }
             }
         }
+        firestationResponseDTO.setMessage("Record cannot be deleted");
         logger.info("No record is found");
         return firestationResponseDTO;
     }
 
+    /**
+     * Delete the record searched with address
+     * @param firestationEntity
+     * @return updated object
+     */
     @PutMapping("/firestation")
     public FirestationResponseDTO updatefirestation(@RequestBody FirestationEntity firestationEntity) {
         FirestationResponseDTO firestationResponseDTO = new FirestationResponseDTO();
@@ -46,7 +60,7 @@ public class FirestationController {
         firestationResponseDTO.setStatusCode(404);
         if ((firestationEntity.getAddress().equals(null))){
             firestationResponseDTO.setMessage("Address is null");
-            firestationResponseDTO.setStatusCode(500);
+            firestationResponseDTO.setStatusCode(400);
             return firestationResponseDTO;
         }
         logger.info("Request for updating firestation record "+ firestationEntity.getAddress());
@@ -56,18 +70,27 @@ public class FirestationController {
             if ((firestations.get(i).getAddress().equals(firestationEntity.getAddress()))) {
                 updateFirestationEntity = firestations.get(i);
                 updateFirestationEntity.setStation(firestationEntity.getStation());
-                firestationResponseDTO.setMessage("Update successful");
-                firestationResponseDTO.setStatusCode(200);
-                logger.debug("updating the data from firestation");
-                fileDataLoadingService.updateDataFile(null,null,firestations);
-                logger.info("Successfully updated the firestation address "+ firestationEntity.getAddress());
-                return firestationResponseDTO;
+                logger.debug("updating the data from firestations "+ firestationEntity.getAddress());
+                boolean isFileWritingSuccessful = fileDataLoadingService.updateDataFile
+                        (null,null,firestations);
+                if (isFileWritingSuccessful){
+                    firestationResponseDTO.setMessage("Update successful");
+                    firestationResponseDTO.setStatusCode(200);
+                    logger.info("Successfully updated the firestation address "+ firestationEntity.getAddress());
+                    return firestationResponseDTO;
+                }
             }
         }
+        firestationResponseDTO.setMessage("Record cannot be updated");
         logger.info("Could not find record");
         return firestationResponseDTO;
     }
 
+    /**
+     * Add a new record
+     * @param firestationEntity
+     * @return added object
+     */
     @PostMapping("/firestation")
     public FirestationResponseDTO addfirestation(@RequestBody FirestationEntity firestationEntity) {
         FirestationResponseDTO firestationResponseDTO = new FirestationResponseDTO();
@@ -76,18 +99,25 @@ public class FirestationController {
         firestationResponseDTO.setStatusCode(404);
         if ((firestationEntity.getAddress().equals(null))){
             firestationResponseDTO.setMessage("Address is null");
-            firestationResponseDTO.setStatusCode(500);
+            firestationResponseDTO.setStatusCode(400);
             return firestationResponseDTO;
         }
         logger.info("Request for adding new firestation details in the firestation record "
                 + firestationEntity.getAddress());
         List<FirestationEntity> firestations = fileDataLoadingService.getFirestations();
         firestations.add(firestationEntity);
-        firestationResponseDTO.setMessage("Record created successfully");
-        firestationResponseDTO.setStatusCode(200);
         logger.debug("adding the data to firestation");
-        fileDataLoadingService.updateDataFile(null,null,firestations);
-        logger.info("Successfully added the firestation address and number");
+        boolean isFileWritingSuccessful = fileDataLoadingService.updateDataFile
+                (null,null,firestations);
+        if (isFileWritingSuccessful){
+            firestationResponseDTO.setMessage("Record created successfully");
+            firestationResponseDTO.setStatusCode(200);
+            logger.info("Successfully added the firestation address and number"+ firestationEntity.getAddress());
+            return firestationResponseDTO;
+        }
+        firestationResponseDTO.setMessage("Record cannot be added");
+        logger.info("Record cannot be added");
         return firestationResponseDTO;
     }
+
 }
