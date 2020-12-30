@@ -47,7 +47,7 @@ public class MedicalRecordsController {
             }
         }
         medicalRecordResponseDTO.setMessage("Record cannot be deleted");
-        logger.info("Could not find record");
+        logger.info("Could not delete record");
         return medicalRecordResponseDTO;
     }
 
@@ -92,7 +92,7 @@ public class MedicalRecordsController {
             }
         }
         medicalRecordResponseDTO.setMessage("Record cannot be updated");
-        logger.info("Could not find record");
+        logger.info("Could not update record");
         return medicalRecordResponseDTO;
     }
 

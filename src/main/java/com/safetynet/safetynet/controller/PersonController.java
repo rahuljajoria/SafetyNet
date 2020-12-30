@@ -45,7 +45,7 @@ public class PersonController {
             }
         }
         personResponseDTO.setMessage("Record cannot be deleted");
-        logger.info("No record is found");
+        logger.info("Could not delete record");
         return personResponseDTO;
     }
 
@@ -91,7 +91,7 @@ public class PersonController {
             }
         }
         personResponseDTO.setMessage("Record cannot be updated");
-        logger.info("Cannot find record");
+        logger.info("Could not update record");
         return personResponseDTO;
     }
 
@@ -123,7 +123,7 @@ public class PersonController {
             return personResponseDTO;
         }
         personResponseDTO.setMessage("Record cannot be added");
-        logger.info("Could not add record");
+        logger.info("Could not update record");
         return personResponseDTO;
     }
 

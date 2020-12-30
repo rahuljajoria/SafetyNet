@@ -43,7 +43,7 @@ public class FirestationController {
             }
         }
         firestationResponseDTO.setMessage("Record cannot be deleted");
-        logger.info("No record is found");
+        logger.info("could not delete record");
         return firestationResponseDTO;
     }
 
@@ -82,7 +82,7 @@ public class FirestationController {
             }
         }
         firestationResponseDTO.setMessage("Record cannot be updated");
-        logger.info("Could not find record");
+        logger.info("Could not update record");
         return firestationResponseDTO;
     }
 

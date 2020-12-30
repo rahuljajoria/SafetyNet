@@ -1,11 +1,10 @@
 package com.safetynet.safetynet.service;
 
 import com.google.gson.Gson;
-import com.safetynet.safetynet.constants.FileUrl;
+import com.safetynet.safetynet.constants.SafetyNetConstants;
 import com.safetynet.safetynet.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -39,7 +38,7 @@ public class FileDataLoadingService {
        // properties.load(new FileInputStream("src/main/resources/data/data.json"));
 
         //File reading logic
-        String dataUrl = FileUrl.url;
+        String dataUrl = SafetyNetConstants.DATA_URL;
         BufferedReader bufferedReader = null;
         try {
             bufferedReader = new BufferedReader(new FileReader(dataUrl));
@@ -59,7 +58,7 @@ public class FileDataLoadingService {
 
     public boolean updateDataFile(List<PersonEntity> persons, List<MedicalRecordEntity> medicalRecords,
                                List<FirestationEntity> firestations) {
-        String dataUrl = FileUrl.url;
+        String dataUrl = SafetyNetConstants.DATA_URL;
         InputFileDTO inputFileDTO = new InputFileDTO();
         if (persons != null){
             inputFileDTO.setPersons(persons);

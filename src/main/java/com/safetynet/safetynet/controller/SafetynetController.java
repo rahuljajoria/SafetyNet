@@ -18,8 +18,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.safetynet.safetynet.utils.AgeCalculator.calculateAge;
-
+import static com.safetynet.safetynet.utils.Utilities.calculateAge;
+import static com.safetynet.safetynet.service.FirestationService.getAddressList;
+import static com.safetynet.safetynet.dto.FireStationDTODetails.FirestationDTO;
+import static com.safetynet.safetynet.dto.FireDTODetails.FireDTO;
+import static com.safetynet.safetynet.dto.FloodDTODetails.DetailDTO.FloodDTO;
+import static com.safetynet.safetynet.dto.FloodDTODetails.DetailDTO;
+import static com.safetynet.safetynet.dto.ChildAlertDTODetails.ChildAlertDTO;
+import static com.safetynet.safetynet.dto.PersonDTODetails.PersonInfoDTO;
 
 @RestController
 public class SafetynetController {
@@ -39,7 +45,7 @@ public class SafetynetController {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDate currDate = LocalDate.now();
         logger.info("Request for a list of people serviced by the corresponding firestation " + stationNumber);
-        FireStationDTODetails.FirestationDTO firestationDTO;
+        FirestationDTO firestationDTO;
         FireStationDTODetails fireStationDTODetails = new FireStationDTODetails();
         fireStationDTODetails.setMessage("No data found");
         fireStationDTODetails.setStatusCode(404);
@@ -49,13 +55,9 @@ public class SafetynetController {
         int noOfAdults = 0;
         int noOfChildren = 0;
         int age;
-        List<String> addressList = new ArrayList<>();
+        List<String> addressList;
         List<FireStationDTODetails.FirestationDTO> personInfo = new ArrayList<>();
-        for (int i = 0; i < firestations.size(); i++) {
-            if (firestations.get(i).getStation().equals(stationNumber)) {
-                addressList.add(firestations.get(i).getAddress());
-            }
-        }
+        addressList = getAddressList(stationNumber,firestations);
         logger.debug("Data from the address list " + addressList);
         for (int i = 0; i < addressList.size(); i++) {
             for (int j = 0; j < persons.size(); j++) {
@@ -110,7 +112,7 @@ public class SafetynetController {
                 "as well as a list of all of the people living at the address " + address);
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDate currDate = LocalDate.now();
-        FireDTODetails.FireDTO fireDTO;
+        FireDTO fireDTO;
         FireDTODetails fireDTODetails = new FireDTODetails();
         fireDTODetails.setMessage("No data found");
         fireDTODetails.setStatusCode(404);
@@ -159,8 +161,8 @@ public class SafetynetController {
                 + stations.toString());
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDate currDate = LocalDate.now();
-        FloodDTODetails.DetailDTO.FloodDTO floodDTO;
-        FloodDTODetails.DetailDTO detailDTO;
+        FloodDTO floodDTO;
+        DetailDTO detailDTO;
         FloodDTODetails floodDTODetails = new FloodDTODetails();
         floodDTODetails.setMessage("No data found");
         floodDTODetails.setStatusCode(404);
@@ -195,7 +197,7 @@ public class SafetynetController {
                     floodDTOList.add(floodDTO);
                 }
             }
-            logger.debug("Data from the list " + floodDTOList);
+            logger.debug("Data from the list " + gson.toJson(floodDTOList));
             detailDTO.setAddress(addressList.get(i));
             detailDTO.setPersons(floodDTOList);
             detailDTOArrayList.add(detailDTO);
@@ -224,13 +226,9 @@ public class SafetynetController {
         phoneAlertDTO.setStatusCode(404);
         List<PersonEntity> persons = fileDataLoadingService.getPersons();
         List<FirestationEntity> firestations = fileDataLoadingService.getFirestations();
-        List<String> addressList = new ArrayList<>();
+        List<String> addressList;
         List<String> phoneNumberList = new ArrayList<>();
-        for (int i = 0; i < firestations.size(); i++) {
-            if (firestations.get(i).getStation().equals(firestation)) {
-                addressList.add(firestations.get(i).getAddress());
-            }
-        }
+        addressList = getAddressList(firestation,firestations);
         logger.debug("Data from the address list " + addressList);
         for (int i = 0; i < addressList.size(); i++) {
             for (int j = 0; j < persons.size(); j++) {
@@ -287,7 +285,7 @@ public class SafetynetController {
         logger.info("Request return a list of children (anyone under the age of 18) at that address " + address);
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDate currDate = LocalDate.now();
-        ChildAlertDTODetails.ChildAlertDTO childAlertDTO;
+        ChildAlertDTO childAlertDTO;
         ChildAlertDTODetails childAlertDTODetails = new ChildAlertDTODetails();
         childAlertDTODetails.setMessage("No data found");
         childAlertDTODetails.setStatusCode(404);
@@ -349,7 +347,7 @@ public class SafetynetController {
         PersonDTODetails personInfoList = new PersonDTODetails();
         personInfoList.setMessage("No data found");
         personInfoList.setStatusCode(404);
-        PersonDTODetails.PersonInfoDTO personInfoDTO;
+        PersonInfoDTO personInfoDTO;
         List<PersonEntity> persons = fileDataLoadingService.getPersons();
         List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
         List<PersonDTODetails.PersonInfoDTO> personInfo = new ArrayList<>();

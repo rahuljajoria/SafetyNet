@@ -36,8 +36,6 @@ class SafetynetControllerTest {
         List <PersonEntity> persons = new ArrayList<>();
         List <FirestationEntity> firestations = new ArrayList<>();
         List <MedicalRecordEntity> medicalRecords = new ArrayList<>();
-        List <String> medications;
-        List <String> allergies;
         PersonEntity personEntity = new PersonEntity("John","Boyd","1509 Culver St",
                 "Culver","97451","841-874-6512","jaboyd@email.com");
         persons.add(personEntity);
@@ -67,7 +65,6 @@ class SafetynetControllerTest {
         Mockito.when(fileDataLoadingService.getPersons()).thenReturn(persons);
         Mockito.when(fileDataLoadingService.getFirestations()).thenReturn(firestations);
         Mockito.when(fileDataLoadingService.getMedicalRecords()).thenReturn(medicalRecords);
-
     }
 
     @AfterEach
