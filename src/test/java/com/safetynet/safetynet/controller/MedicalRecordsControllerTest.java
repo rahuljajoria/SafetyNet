@@ -65,28 +65,39 @@ class MedicalRecordsControllerTest {
         Mockito.when(fileDataLoadingService.getMedicalRecords()).thenReturn(medicalRecords);
     }
 
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void deleteMedicalRecord() {
-        List <MedicalRecordEntity> medicalRecords = new ArrayList<>();
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
         MedicalRecordResponseDTO medicalRecordResponseDTO = medicalRecordsController.
                 deleteMedicalRecord("Tenley","Boyd");
-        Mockito.when(fileDataLoadingService.updateDataFile(null,medicalRecords,null)).thenReturn(true);
-        assertEquals("Success",medicalRecordResponseDTO.getMessage());
+        assertEquals("Delete successful",medicalRecordResponseDTO.getMessage());
         assertEquals(200,medicalRecordResponseDTO.getStatusCode());
         assertEquals("Tenley",medicalRecordResponseDTO.getFname());
     }
 
     @Test
     void updateMedicalRecord() {
-
+        MedicalRecordEntity medicalRecordEntity = new MedicalRecordEntity
+                ("Tenley", "Boyd", "08/30/1979",
+                        Arrays.asList("thradox:700mg"), Arrays.asList("illisoxian"));
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
+        MedicalRecordResponseDTO medicalRecordResponseDTO =
+                medicalRecordsController.updateMedicalRecord(medicalRecordEntity);
+        assertEquals("Update successful",medicalRecordResponseDTO.getMessage());
+        assertEquals(200,medicalRecordResponseDTO.getStatusCode());
+        assertEquals("Tenley",medicalRecordResponseDTO.getFname());
     }
 
     @Test
     void addMedicalRecord() {
-
+        MedicalRecordEntity medicalRecordEntity = new MedicalRecordEntity
+                ("Reginold", "Walker", "08/30/1979",
+                        Arrays.asList("thradox:700mg"), Arrays.asList("illisoxian"));
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
+        MedicalRecordResponseDTO medicalRecordResponseDTO =
+                medicalRecordsController.addMedicalRecord(medicalRecordEntity);
+        assertEquals("add successful",medicalRecordResponseDTO.getMessage());
+        assertEquals(200,medicalRecordResponseDTO.getStatusCode());
+        assertEquals("Reginold",medicalRecordResponseDTO.getFname());
     }
 }

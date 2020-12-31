@@ -29,7 +29,7 @@ public class MedicalRecordsController {
         medicalRecordResponseDTO.setLname(lName);
         medicalRecordResponseDTO.setMessage("Could not find resource");
         medicalRecordResponseDTO.setStatusCode(404);
-        logger.info("Request for deleting a person's record using first and last name" +fName+" "+lName);
+        logger.info("Request for deleting a person's record using first and last name " +fName+" "+lName);
         List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
         for (int i = 0; i < medicalRecords.size(); i++) {
             if ((medicalRecords.get(i).getFirstName().equals(fName)) &&
@@ -112,7 +112,7 @@ public class MedicalRecordsController {
             return medicalRecordResponseDTO;
         }
         List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
-        logger.info("Request for adding new person details in the person record" + medicalRecordEntity.getFirstName()
+        logger.info("Request for adding new person details in the person record " + medicalRecordEntity.getFirstName()
                 + " "+ medicalRecordEntity.getLastName());
         medicalRecords.add(medicalRecordEntity);
         logger.debug("removing the data from medical records list "+

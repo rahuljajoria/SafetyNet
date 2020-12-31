@@ -111,7 +111,7 @@ public class PersonController {
             return personResponseDTO;
         }
         List<PersonEntity> persons = fileDataLoadingService.getPersons();
-        logger.info("Request for adding new person details in the person record" + personEntity.getFirstName()
+        logger.info("Request for adding new person details in the person record " + personEntity.getFirstName()
                 + " " + personEntity.getLastName());
         persons.add(personEntity);
         boolean isFileWritingSuccessful = fileDataLoadingService.updateDataFile

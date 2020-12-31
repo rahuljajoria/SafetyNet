@@ -112,7 +112,7 @@ public class FirestationController {
         if (isFileWritingSuccessful){
             firestationResponseDTO.setMessage("Record created successfully");
             firestationResponseDTO.setStatusCode(200);
-            logger.info("Successfully added the firestation address and number"+ firestationEntity.getAddress());
+            logger.info("Successfully added the firestation address and number "+ firestationEntity.getAddress());
             return firestationResponseDTO;
         }
         firestationResponseDTO.setMessage("Record cannot be added");
