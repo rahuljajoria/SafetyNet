@@ -67,7 +67,7 @@ class PersonControllerTest {
     }
 
     @Test
-    void deletePerson() {
+    void deletePersonTrue() {
         Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
         PersonResponseDTO personResponseDTO = personController.deletePerson("Tenley","Boyd");
         assertEquals("Delete Successful",personResponseDTO.getMessage());
@@ -76,7 +76,16 @@ class PersonControllerTest {
     }
 
     @Test
-    void updatePerson() {
+    void deletePersonFalse() {
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(false);
+        PersonResponseDTO personResponseDTO = personController.deletePerson("Tenley","Boyd");
+        assertEquals("Record cannot be deleted",personResponseDTO.getMessage());
+        assertEquals(400,personResponseDTO.getStatusCode());
+        assertEquals("Tenley",personResponseDTO.getfName());
+    }
+
+    @Test
+    void updatePersonTrue() {
         PersonEntity personEntity = new PersonEntity("Tenley","Boyd","834 Binoc Ave",
                 "Culver","97451","841-874-6512","tenz@email.com");
         Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
@@ -88,7 +97,29 @@ class PersonControllerTest {
     }
 
     @Test
-    void addPerson() {
+    void updatePersonFalse() {
+        PersonEntity personEntity = new PersonEntity("Tenley","Boyd","834 Binoc Ave",
+                "Culver","97451","841-874-6512","tenz@email.com");
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(false);
+        PersonResponseDTO personResponseDTO = personController.updatePerson(personEntity);
+        assertEquals("Record cannot be updated",personResponseDTO.getMessage());
+        assertEquals(400,personResponseDTO.getStatusCode());
+        assertEquals("Tenley",personResponseDTO.getfName());
+        assertEquals("Boyd",personResponseDTO.getlName());
+    }
+
+    @Test
+    void updatePersonNull() {
+        PersonEntity personEntity = new PersonEntity(null,"Boyd","834 Binoc Ave",
+                "Culver","97451","841-874-6512","tenz@email.com");
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
+        PersonResponseDTO personResponseDTO = personController.updatePerson(personEntity);
+        assertEquals("Either First name or Last name is null",personResponseDTO.getMessage());
+        assertEquals(400,personResponseDTO.getStatusCode());
+    }
+
+    @Test
+    void addPersonTrue() {
         PersonEntity personEntity = new PersonEntity("Tessa","Carman","834 Binoc Ave",
                 "Culver","97451","841-874-6512","tenz@email.com");
         Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
@@ -97,5 +128,27 @@ class PersonControllerTest {
         assertEquals(200,personResponseDTO.getStatusCode());
         assertEquals("Tessa",personResponseDTO.getfName());
         assertEquals("Carman",personResponseDTO.getlName());
+    }
+
+    @Test
+    void addPersonFalse() {
+        PersonEntity personEntity = new PersonEntity("Tessa","Carman","834 Binoc Ave",
+                "Culver","97451","841-874-6512","tenz@email.com");
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(false);
+        PersonResponseDTO personResponseDTO = personController.addPerson(personEntity);
+        assertEquals("Record cannot be added",personResponseDTO.getMessage());
+        assertEquals(400,personResponseDTO.getStatusCode());
+        assertEquals("Tessa",personResponseDTO.getfName());
+        assertEquals("Carman",personResponseDTO.getlName());
+    }
+
+    @Test
+    void addPersonNull() {
+        PersonEntity personEntity = new PersonEntity("Tessa",null,"834 Binoc Ave",
+                "Culver","97451","841-874-6512","tenz@email.com");
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
+        PersonResponseDTO personResponseDTO = personController.addPerson(personEntity);
+        assertEquals("Either First name or Last name is null",personResponseDTO.getMessage());
+        assertEquals(400,personResponseDTO.getStatusCode());
     }
 }

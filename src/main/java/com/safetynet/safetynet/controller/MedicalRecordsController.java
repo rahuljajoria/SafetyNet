@@ -47,6 +47,7 @@ public class MedicalRecordsController {
             }
         }
         medicalRecordResponseDTO.setMessage("Record cannot be deleted");
+        medicalRecordResponseDTO.setStatusCode(400);
         logger.info("Could not delete record");
         return medicalRecordResponseDTO;
     }
@@ -63,9 +64,10 @@ public class MedicalRecordsController {
         medicalRecordResponseDTO.setLname(medicalRecordEntity.getLastName());
         medicalRecordResponseDTO.setMessage("Could not find resource");
         medicalRecordResponseDTO.setStatusCode(404);
-        if (medicalRecordEntity.getFirstName().equals(null)||medicalRecordEntity.getLastName().equals(null)){
+        if (medicalRecordEntity.getFirstName() == null||medicalRecordEntity.getLastName() == null){
             medicalRecordResponseDTO.setMessage("Either First name or Last name is null");
             medicalRecordResponseDTO.setStatusCode(400);
+            logger.info("Either First or last name is null");
             return medicalRecordResponseDTO;
         }
         logger.info("Request for updating medical record using First and last name" +
@@ -92,6 +94,7 @@ public class MedicalRecordsController {
             }
         }
         medicalRecordResponseDTO.setMessage("Record cannot be updated");
+        medicalRecordResponseDTO.setStatusCode(400);
         logger.info("Could not update record");
         return medicalRecordResponseDTO;
     }
@@ -108,7 +111,9 @@ public class MedicalRecordsController {
         medicalRecordResponseDTO.setLname(medicalRecordEntity.getLastName());
         medicalRecordResponseDTO.setMessage("Could not add record");
         medicalRecordResponseDTO.setStatusCode(400);
-        if (medicalRecordEntity.getFirstName().equals(null)||medicalRecordEntity.getLastName().equals(null)){
+        if (medicalRecordEntity.getFirstName() == null||medicalRecordEntity.getLastName() == null){
+            medicalRecordResponseDTO.setMessage("Either First name or Last name is null");
+            logger.info("Either First or last name is null");
             return medicalRecordResponseDTO;
         }
         List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
@@ -126,6 +131,7 @@ public class MedicalRecordsController {
             return medicalRecordResponseDTO;
         }
         medicalRecordResponseDTO.setMessage("Record cannot be added");
+        medicalRecordResponseDTO.setStatusCode(400);
                 logger.info("Could not add record");
                 return medicalRecordResponseDTO;
     }

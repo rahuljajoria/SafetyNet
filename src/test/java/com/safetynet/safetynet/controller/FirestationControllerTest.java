@@ -66,7 +66,7 @@ class FirestationControllerTest {
     }
 
     @Test
-    void deletefirestation() {
+    void deletefirestationTestTrue() {
         Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
         FirestationResponseDTO firestationResponseDTO = firestationController.deletefirestation
                 ("1509 Culver St");
@@ -76,7 +76,17 @@ class FirestationControllerTest {
     }
 
     @Test
-    void updatefirestation() {
+    void deletefirestationTestFalse() {
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(false);
+        FirestationResponseDTO firestationResponseDTO = firestationController.deletefirestation
+                ("1509 Culver St");
+        assertEquals( "Record cannot be deleted",firestationResponseDTO.getMessage());
+        assertEquals(400,firestationResponseDTO.getStatusCode());
+        assertEquals(true,firestationResponseDTO.getAddress().equals("1509 Culver St"));
+    }
+
+    @Test
+    void updatefirestationTrue() {
         Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
         FirestationEntity firestationEntity = new FirestationEntity("1509 Culver St","3");
         FirestationResponseDTO firestationResponseDTO = firestationController.updatefirestation(firestationEntity);
@@ -86,12 +96,49 @@ class FirestationControllerTest {
     }
 
     @Test
-    void addfirestation() {
+    void updatefirestationFalse() {
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(false);
+        FirestationEntity firestationEntity = new FirestationEntity("1509 Culver St","3");
+        FirestationResponseDTO firestationResponseDTO = firestationController.updatefirestation(firestationEntity);
+        assertEquals("Record cannot be updated",firestationResponseDTO.getMessage());
+        assertEquals(400,firestationResponseDTO.getStatusCode());
+        assertEquals(true,firestationResponseDTO.getAddress().equals("1509 Culver St"));
+    }
+
+    @Test
+    void updatefirestationNull() {
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
+        FirestationEntity firestationEntity = new FirestationEntity(null,"3");
+        FirestationResponseDTO firestationResponseDTO = firestationController.updatefirestation(firestationEntity);
+        assertEquals("Address is null",firestationResponseDTO.getMessage());
+        assertEquals(400,firestationResponseDTO.getStatusCode());
+    }
+
+    @Test
+    void addfirestationTrue() {
         Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
         FirestationEntity firestationEntity = new FirestationEntity("908 73rd St","1");
         FirestationResponseDTO firestationResponseDTO = firestationController.addfirestation(firestationEntity);
         assertEquals("Record created successfully",firestationResponseDTO.getMessage());
         assertEquals(200,firestationResponseDTO.getStatusCode());
         assertEquals(true,firestationResponseDTO.getAddress().equals("908 73rd St"));
+    }
+
+    @Test
+    void addfirestationFalse() {
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(false);
+        FirestationEntity firestationEntity = new FirestationEntity("908 73rd St","1");
+        FirestationResponseDTO firestationResponseDTO = firestationController.addfirestation(firestationEntity);
+        assertEquals("Record cannot be added",firestationResponseDTO.getMessage());
+        assertEquals(400,firestationResponseDTO.getStatusCode());
+        assertEquals(true,firestationResponseDTO.getAddress().equals("908 73rd St"));
+    }
+    @Test
+    void addfirestationNull() {
+        Mockito.when(fileDataLoadingService.updateDataFile(Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(true);
+        FirestationEntity firestationEntity = new FirestationEntity(null,"1");
+        FirestationResponseDTO firestationResponseDTO = firestationController.addfirestation(firestationEntity);
+        assertEquals("Address is null",firestationResponseDTO.getMessage());
+        assertEquals(400,firestationResponseDTO.getStatusCode());
     }
 }

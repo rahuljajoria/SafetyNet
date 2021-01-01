@@ -45,6 +45,7 @@ public class PersonController {
             }
         }
         personResponseDTO.setMessage("Record cannot be deleted");
+        personResponseDTO.setStatusCode(400);
         logger.info("Could not delete record");
         return personResponseDTO;
     }
@@ -61,7 +62,7 @@ public class PersonController {
         personResponseDTO.setlName(personEntity.getLastName());
         personResponseDTO.setMessage("Could not find resource");
         personResponseDTO.setStatusCode(404);
-        if (personEntity.getFirstName().equals(null)||personEntity.getLastName().equals(null)){
+        if (personEntity.getFirstName() == null||personEntity.getLastName() == null){
             personResponseDTO.setMessage("Either First name or Last name is null");
             personResponseDTO.setStatusCode(400);
             return personResponseDTO;
@@ -91,6 +92,7 @@ public class PersonController {
             }
         }
         personResponseDTO.setMessage("Record cannot be updated");
+        personResponseDTO.setStatusCode(400);
         logger.info("Could not update record");
         return personResponseDTO;
     }
@@ -107,7 +109,9 @@ public class PersonController {
         personResponseDTO.setlName(personEntity.getLastName());
         personResponseDTO.setMessage("Could not add resource");
         personResponseDTO.setStatusCode(400);
-        if ((personEntity.getFirstName().equals(null)) || (personEntity.getLastName().equals(null))) {
+        if ((personEntity.getFirstName() == null) || (personEntity.getLastName() == null)) {
+            logger.info("Either First or last name is null");
+            personResponseDTO.setMessage("Either First name or Last name is null");
             return personResponseDTO;
         }
         List<PersonEntity> persons = fileDataLoadingService.getPersons();
@@ -123,6 +127,7 @@ public class PersonController {
             return personResponseDTO;
         }
         personResponseDTO.setMessage("Record cannot be added");
+        personResponseDTO.setStatusCode(400);
         logger.info("Could not update record");
         return personResponseDTO;
     }

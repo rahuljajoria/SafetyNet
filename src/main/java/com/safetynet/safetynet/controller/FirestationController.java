@@ -43,6 +43,7 @@ public class FirestationController {
             }
         }
         firestationResponseDTO.setMessage("Record cannot be deleted");
+        firestationResponseDTO.setStatusCode(400);
         logger.info("could not delete record");
         return firestationResponseDTO;
     }
@@ -58,9 +59,10 @@ public class FirestationController {
         firestationResponseDTO.setAddress(firestationEntity.getAddress());
         firestationResponseDTO.setMessage("Could not find resource");
         firestationResponseDTO.setStatusCode(404);
-        if ((firestationEntity.getAddress().equals(null))){
+        if ((firestationEntity.getAddress() == null)){
             firestationResponseDTO.setMessage("Address is null");
             firestationResponseDTO.setStatusCode(400);
+            logger.info("Address is null");
             return firestationResponseDTO;
         }
         logger.info("Request for updating firestation record "+ firestationEntity.getAddress());
@@ -82,6 +84,7 @@ public class FirestationController {
             }
         }
         firestationResponseDTO.setMessage("Record cannot be updated");
+        firestationResponseDTO.setStatusCode(400);
         logger.info("Could not update record");
         return firestationResponseDTO;
     }
@@ -97,9 +100,10 @@ public class FirestationController {
         firestationResponseDTO.setAddress(firestationEntity.getAddress());
         firestationResponseDTO.setMessage("Could not find resource");
         firestationResponseDTO.setStatusCode(404);
-        if ((firestationEntity.getAddress().equals(null))){
+        if ((firestationEntity.getAddress() == null)){
             firestationResponseDTO.setMessage("Address is null");
             firestationResponseDTO.setStatusCode(400);
+            logger.info("Address is null");
             return firestationResponseDTO;
         }
         logger.info("Request for adding new firestation details in the firestation record "
@@ -116,6 +120,7 @@ public class FirestationController {
             return firestationResponseDTO;
         }
         firestationResponseDTO.setMessage("Record cannot be added");
+        firestationResponseDTO.setStatusCode(400);
         logger.info("Record cannot be added");
         return firestationResponseDTO;
     }
