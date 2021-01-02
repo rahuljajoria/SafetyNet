@@ -21,7 +21,7 @@ public class FirestationController {
      * @return address from the record which is deleted
      */
     @DeleteMapping("/firestation")
-    public FirestationResponseDTO deletefirestation(@RequestParam("address") String address) {
+    public FirestationResponseDTO deleteFirestation(@RequestParam("address") String address) {
         FirestationResponseDTO firestationResponseDTO = new FirestationResponseDTO();
         firestationResponseDTO.setAddress(address);
         firestationResponseDTO.setMessage("Could not find resource");
@@ -54,7 +54,7 @@ public class FirestationController {
      * @return updated object
      */
     @PutMapping("/firestation")
-    public FirestationResponseDTO updatefirestation(@RequestBody FirestationEntity firestationEntity) {
+    public FirestationResponseDTO updateFirestation(@RequestBody FirestationEntity firestationEntity) {
         FirestationResponseDTO firestationResponseDTO = new FirestationResponseDTO();
         firestationResponseDTO.setAddress(firestationEntity.getAddress());
         firestationResponseDTO.setMessage("Could not find resource");
@@ -95,7 +95,7 @@ public class FirestationController {
      * @return added object
      */
     @PostMapping("/firestation")
-    public FirestationResponseDTO addfirestation(@RequestBody FirestationEntity firestationEntity) {
+    public FirestationResponseDTO addFirestation(@RequestBody FirestationEntity firestationEntity) {
         FirestationResponseDTO firestationResponseDTO = new FirestationResponseDTO();
         firestationResponseDTO.setAddress(firestationEntity.getAddress());
         firestationResponseDTO.setMessage("Could not find resource");

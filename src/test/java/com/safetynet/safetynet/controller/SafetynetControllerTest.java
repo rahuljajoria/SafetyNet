@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @RunWith(SpringRunner.class)
@@ -76,7 +77,7 @@ class SafetynetControllerTest {
         FireStationDTODetails fireStationDTODetails = safetynetController.getPersonsFromFireStation("3");
         assertEquals(fireStationDTODetails.getMessage(), "Success");
         assertEquals(fireStationDTODetails.getStatusCode(),200);
-        assertEquals(fireStationDTODetails.getPersonsInfo().get(0).getAddress(),"1509 Culver St");
+        assertEquals("1509 Culver St",fireStationDTODetails.getPersonsInfo().get(0).getAddress());
     }
 
     @Test
@@ -84,16 +85,16 @@ class SafetynetControllerTest {
         FireDTODetails fireDTODetails = safetynetController.getAddressInfo("1509 Culver St");
         assertEquals(fireDTODetails.getMessage(), "Success");
         assertEquals(fireDTODetails.getStatusCode(),200);
-        assertEquals(fireDTODetails.getPersonDetails().get(0).getFirstName(),"John");
-        assertEquals(fireDTODetails.getPersonDetails().get(0).getLastName(),"Boyd");
+        assertEquals("John",fireDTODetails.getPersonDetails().get(0).getFirstName());
+        assertEquals("Boyd",fireDTODetails.getPersonDetails().get(0).getLastName());
     }
 
     @Test
     void testGetFloodInfo() {
-        FloodDTODetails floodDTODetails = safetynetController.getFloodInfo(Arrays.asList(new String[]{"2", "3"}));
+        FloodDTODetails floodDTODetails = safetynetController.getFloodInfo(Arrays.asList("2", "3"));
         assertEquals(floodDTODetails.getMessage(), "Success");
         assertEquals(floodDTODetails.getStatusCode(),200);
-        assertEquals(floodDTODetails.getDetails().get(0).getAddress().contains("1509 Culver St"),true);
+        assertTrue(floodDTODetails.getDetails().get(0).getAddress().contains("1509 Culver St"));
     }
 
     @Test
@@ -101,7 +102,7 @@ class SafetynetControllerTest {
         PhoneAlertDTO phoneAlertDTO = safetynetController.getPhonesNumbers("3");
         assertEquals(phoneAlertDTO.getMessage(), "Success");
         assertEquals(phoneAlertDTO.getStatusCode(),200);
-        assertEquals(phoneAlertDTO.getPhone().contains("841-874-6512"),true);
+        assertTrue(phoneAlertDTO.getPhone().contains("841-874-6512"));
     }
 
     @Test
@@ -109,7 +110,7 @@ class SafetynetControllerTest {
         CommunityEmailDTO communityEmailDTO= safetynetController.getEmailAddress("Culver");
         assertEquals(communityEmailDTO.getMessage(), "Success");
         assertEquals(communityEmailDTO.getStatusCode(),200);
-        assertEquals(communityEmailDTO.getEmails().contains("jaboyd@email.com"),true);
+        assertTrue(communityEmailDTO.getEmails().contains("jaboyd@email.com"));
     }
 
     @Test
@@ -117,8 +118,8 @@ class SafetynetControllerTest {
         ChildAlertDTODetails childAlertDTODetails = safetynetController.getChildAlert("1509 Culver St");
         assertEquals(childAlertDTODetails.getMessage(), "Success");
         assertEquals(childAlertDTODetails.getStatusCode(),200);
-        assertEquals(childAlertDTODetails.getChildrenDetails().get(0).getFirstName(),"Tenley");
-        assertEquals(childAlertDTODetails.getChildrenDetails().get(0).getLastName(),"Boyd");
+        assertEquals("Tenley",childAlertDTODetails.getChildrenDetails().get(0).getFirstName());
+        assertEquals("Boyd",childAlertDTODetails.getChildrenDetails().get(0).getLastName());
     }
 
     @Test
@@ -126,7 +127,7 @@ class SafetynetControllerTest {
         PersonDTODetails personDTODetails = safetynetController.getPersonInfo("John","Boyd");
         assertEquals(personDTODetails.getMessage(), "Success");
         assertEquals(personDTODetails.getStatusCode(),200);
-        assertEquals(personDTODetails.getPersonInfo().get(0).getFirstName(),"John");
-        assertEquals(personDTODetails.getPersonInfo().get(0).getLastName(),"Boyd");
+        assertEquals("John",personDTODetails.getPersonInfo().get(0).getFirstName());
+        assertEquals("Boyd",personDTODetails.getPersonInfo().get(0).getLastName());
     }
 }

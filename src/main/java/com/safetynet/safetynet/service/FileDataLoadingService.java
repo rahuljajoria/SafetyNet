@@ -34,10 +34,6 @@ public class FileDataLoadingService {
 
     @PostConstruct
     public void init() {
-       // Properties properties = new Properties();
-       // properties.load(new FileInputStream("src/main/resources/data/data.json"));
-
-        //File reading logic
         String dataUrl = SafetyNetConstants.DATA_URL;
         BufferedReader bufferedReader = null;
         try {
