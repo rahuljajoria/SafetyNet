@@ -70,7 +70,7 @@ public class PersonController {
         logger.info("Request for updating person record using First and last name "
                 +personEntity.getFirstName() + " "+ personEntity.getLastName());
         List<PersonEntity> persons = fileDataLoadingService.getPersons();
-        PersonEntity updatedPerson = null;
+        PersonEntity updatedPerson ;
         for (int i = 0; i < persons.size(); i++) {
             if ((persons.get(i).getFirstName().equals(personEntity.getFirstName())) &&
                     (persons.get(i).getLastName().equals(personEntity.getLastName()))) {

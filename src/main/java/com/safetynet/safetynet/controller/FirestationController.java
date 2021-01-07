@@ -30,6 +30,7 @@ public class FirestationController {
         List<FirestationEntity> firestations = fileDataLoadingService.getFirestations();
         for (int i = 0; i < firestations.size(); i++) {
             if (firestations.get(i).getAddress().equals(address)) {
+                firestationResponseDTO.setStation(firestations.get(i).getStation());
                 firestations.remove(i);
                 logger.debug("removing the data from firestations "+address);
                 boolean isFileWritingSuccessful = fileDataLoadingService.updateDataFile
@@ -67,11 +68,9 @@ public class FirestationController {
         }
         logger.info("Request for updating firestation record "+ firestationEntity.getAddress());
         List<FirestationEntity> firestations = fileDataLoadingService.getFirestations();
-        FirestationEntity updateFirestationEntity = null;
         for (int i = 0; i < firestations.size(); i++) {
             if ((firestations.get(i).getAddress().equals(firestationEntity.getAddress()))) {
-                updateFirestationEntity = firestations.get(i);
-                updateFirestationEntity.setStation(firestationEntity.getStation());
+                firestationResponseDTO.setStation(firestationEntity.getStation());
                 logger.debug("updating the data from firestations "+ firestationEntity.getAddress());
                 boolean isFileWritingSuccessful = fileDataLoadingService.updateDataFile
                         (null,null,firestations);
@@ -98,6 +97,7 @@ public class FirestationController {
     public FirestationResponseDTO addFirestation(@RequestBody FirestationEntity firestationEntity) {
         FirestationResponseDTO firestationResponseDTO = new FirestationResponseDTO();
         firestationResponseDTO.setAddress(firestationEntity.getAddress());
+        firestationResponseDTO.setStation(firestationEntity.getStation());
         firestationResponseDTO.setMessage("Could not find resource");
         firestationResponseDTO.setStatusCode(404);
         if ((firestationEntity.getAddress() == null)){

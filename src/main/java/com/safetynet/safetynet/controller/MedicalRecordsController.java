@@ -73,7 +73,7 @@ public class MedicalRecordsController {
         logger.info("Request for updating medical record using First and last name" +
                 medicalRecordEntity.getFirstName() +" "+ medicalRecordEntity.getLastName());
         List<MedicalRecordEntity> medicalRecords = fileDataLoadingService.getMedicalRecords();
-        MedicalRecordEntity updatedMedicalRecord = null;
+        MedicalRecordEntity updatedMedicalRecord;
         for (int i = 0; i < medicalRecords.size(); i++) {
             if ((medicalRecords.get(i).getFirstName().equals(medicalRecordEntity.getFirstName())) &&
                     (medicalRecords.get(i).getLastName().equals(medicalRecordEntity.getLastName())))
